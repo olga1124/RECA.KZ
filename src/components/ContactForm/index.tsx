@@ -115,8 +115,7 @@ const ContactForm: React.FC<ContactFormProps> = ({
                     <div className="contact-form-wrapper">
                         <header className="contact-form-header">
                             <h3>Отправка запроса</h3>
-                            <p>Мы подготовим для вас лучше предложения на трудовом рынке, и проделаем всю самую сложную работу за вас. 
-                                После отправки формы мы свяжемся с вами по указанным данным для дальнейшего продолжения сотрудничества</p>
+                            <p>После отправки формы мы свяжемся с вами по указанным данным для дальнейшего продолжения сотрудничества</p>
                         </header>
                         <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
                             <label className="input-container flex-1">
