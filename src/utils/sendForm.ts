@@ -11,7 +11,7 @@ interface SendFormProps {
 const sendForm = async (params: SendFormProps) => {
   const serviceID = process.env.NEXT_PUBLIC_SERVICE_ID;
   const templateID = process.env.NEXT_PUBLIC_TEMPLATE_NEW_LEAD;
-  const userKey = process.env.NEXT_PUBLIC_USER_KEY;
+  const userID = process.env.NEXT_PUBLIC_USER_ID;
 
   if (!serviceID) {
     throw new Error('Environment variable SERVICE_ID is missing');
@@ -19,7 +19,7 @@ const sendForm = async (params: SendFormProps) => {
   if (!templateID) {
     throw new Error('Environment variable TEMPLATE_ID is missing');
   }
-  if (!userKey) {
+  if (!userID) {
     throw new Error('Environment variable USER_KEY is missing');
   }
 
@@ -36,7 +36,7 @@ const sendForm = async (params: SendFormProps) => {
       serviceID,
       templateID,
       templateParams,
-      userKey
+      userID
     );
     console.log(result.text);
     return result;

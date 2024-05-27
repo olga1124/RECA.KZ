@@ -33,9 +33,9 @@ const UploadCV = () => {
         reader.onload = async () => {
             const serviceID = process.env.NEXT_PUBLIC_SERVICE_ID;
             const templateID = process.env.NEXT_PUBLIC_TEMPLATE_UPLOAD_CV;
-            const userKey = process.env.NEXT_PUBLIC_USER_KEY;
+            const userID = process.env.NEXT_PUBLIC_USER_ID;
 
-            if (!serviceID || !templateID || !userKey) {
+            if (!serviceID || !templateID || !userID) {
                 console.error('One or more environment variables are missing');
                 return;
             }
@@ -48,7 +48,7 @@ const UploadCV = () => {
                 my_file_name: file.name
             };
 
-            emailjs.send(serviceID, templateID, emailParams, userKey)
+            emailjs.send(serviceID, templateID, emailParams, userID)
                 .then((result) => {
                     console.log('SUCCESS!', result.status, result.text);
                     setFile(null);
