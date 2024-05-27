@@ -88,7 +88,7 @@ p {
     'links social'
     'logo logo'
     'copyright copyright';
-    align-items: start;
+  align-items: start;
   grid-gap: 20px;
   padding: 30px 0;
   color: white;
@@ -100,7 +100,7 @@ p {
     grid-template-areas:
       'logo social links'
       'copyright copyright copyright';
-      align-items: center;
+    align-items: center;
   }
 }
 
@@ -222,6 +222,7 @@ p {
   border-radius: 30px;
   flex: 1;
 
+  button,
   a {
     color: white;
     padding: 10px 30px;
@@ -238,10 +239,12 @@ p {
       color: #04426F;
     }
 
+    button,
     a {
       background-color: #04426F;
     }
 
+    button:hover,
     a:hover {
       background-color: #266795;
     }
@@ -253,10 +256,12 @@ p {
       color: #CF7B18;
     }
 
+    button,
     a {
       background-color: #CF7B18;
     }
 
+    button:hover,
     a:hover {
       background-color: #cf7a18ce;
     }

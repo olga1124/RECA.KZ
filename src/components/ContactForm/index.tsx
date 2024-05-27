@@ -1,6 +1,7 @@
 import React, { useState, ChangeEvent, FormEvent } from 'react';
 import { FaCheckCircle } from 'react-icons/fa';
 import { FaXmark } from 'react-icons/fa6';
+import sendForm from "../../utils/sendForm";
 
 interface ContactFormProps {
     service?: string;
@@ -16,20 +17,7 @@ interface FormData {
     subject: string;
 }
 
-interface DataToSend {
-    selections?: string[];
-    name: string;
-    email: string;
-    phone: string;
-    subject: string;
-}
-
-const ContactForm: React.FC<ContactFormProps> = ({
-    service,
-    selections,
-    onRemoveSelection
-}) => {
-
+const ContactForm: React.FC<ContactFormProps> = ({ service, selections = [], onRemoveSelection }) => {
     const [canSend, setCanSend] = useState(true);
     const [status, setStatus] = useState<boolean | null>(null);
 
@@ -43,10 +31,10 @@ const ContactForm: React.FC<ContactFormProps> = ({
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        setFormData(prevState => {
-            const updatedFormData = { ...prevState, [name]: value };
-            return updatedFormData;
-        });
+        setFormData(prevState => ({
+            ...prevState,
+            [name]: value
+        }));
     };
 
     const handleSubmit = async (e: FormEvent) => {
@@ -54,8 +42,8 @@ const ContactForm: React.FC<ContactFormProps> = ({
         if (canSend) {
             setCanSend(false);
 
-            const dataToSend: DataToSend = {
-                selections,
+            const dataToSend = {
+                selections: selections.length > 0 ? selections.join(', ') : 'No selections',
                 name: formData.name,
                 email: formData.email,
                 phone: formData.phone,
@@ -63,19 +51,7 @@ const ContactForm: React.FC<ContactFormProps> = ({
             };
 
             try {
-                const response = await fetch('https://nelcosoft-backend-docker-image-izihmdm54q-ew.a.run.app/api/leads/send-email', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(dataToSend)
-                });
-
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
-
-                const result = await response.json();
+                await sendForm(dataToSend);
                 setStatus(true);
                 setFormData({
                     selections: [],
@@ -84,7 +60,7 @@ const ContactForm: React.FC<ContactFormProps> = ({
                     phone: '',
                     subject: ''
                 });
-                if (selections && selections.length > 0) {
+                if (selections.length > 0) {
                     selections.forEach((_, index) => onRemoveSelection?.(index));
                 }
             } catch (error) {
@@ -96,7 +72,6 @@ const ContactForm: React.FC<ContactFormProps> = ({
         }
     };
 
-
     return (
         <div className="contact-form">
             {canSend ? (
@@ -104,11 +79,10 @@ const ContactForm: React.FC<ContactFormProps> = ({
                     <div className="flex flex-col gap-20">
                         <header className="contact-form-header">
                             <h2>{status ? "Спасибо за ваше обращение" : "Ошибка отправки"}</h2>
-                            <p>{status ? "Скоро мы свяжемся в вами и предостаавим ответы на интересующие вопросы" : "Мы уже решаем эту проблему, попробуйте отправить запрос позднее"}</p>
-
+                            <p>{status ? "Скоро мы свяжемся в вами и предоставим ответы на интересующие вопросы" : "Мы уже решаем эту проблему, попробуйте отправить запрос позднее"}</p>
                         </header>
                         <p className={`self-center ${status ? "text-green-600" : "text-red-600"}`}>
-                            {status ? "Ваше сообщение было успешно  отправлено" : "Ошибка отправки сообщения"}
+                            {status ? "Ваше сообщение было успешно отправлено" : "Ошибка отправки сообщения"}
                         </p>
                     </div>
                 ) : (
@@ -134,7 +108,7 @@ const ContactForm: React.FC<ContactFormProps> = ({
                                 <input type="text" name="subject" placeholder="Subject" value={formData.subject} onChange={handleChange} required aria-label="Subject" />
                                 <span>Сообщение</span>
                             </label>
-                            {selections && selections.length > 0 && (
+                            {selections.length > 0 && (
                                 <>
                                     <h4>Выбранные услуги:</h4>
                                     <div className="flex gap-3 flex-wrap items-center pb-4">
@@ -146,7 +120,7 @@ const ContactForm: React.FC<ContactFormProps> = ({
                                                     onClick={() => onRemoveSelection?.(index)}
                                                     className="text-gray-500 hover:text-gray-800 focus:outline-none text-1xl"
                                                     aria-label={`Remove ${item}`}>
-                                                    <FaXmark width="15px" height="15px"/>
+                                                    <FaXmark width="15px" height="15px" />
                                                 </button>
                                             </div>
                                         ))}
@@ -160,10 +134,10 @@ const ContactForm: React.FC<ContactFormProps> = ({
             ) : (
                 <div className="flex flex-col gap-20 py-4 text-center justify-around items-center">
                     <h3>Отправка информации</h3>
-                    < div className="loader"></div>
+                    <div className="loader"></div>
                 </div>
             )}
-        </div >
+        </div>
     );
 };
 

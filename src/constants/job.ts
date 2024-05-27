@@ -1,5 +1,5 @@
 import { HeroProps } from "@/components/Hero";
-import { ServiceCardProps } from "@/components/ServiceCard";
+import { ServiceCardProps, CardType, PopupType } from "@/components/ServiceCard/ServiceCardTypes";
 
 export const jobHero: HeroProps = {
     title: "Ищу работу",
@@ -12,13 +12,16 @@ export const categories: ServiceCardProps[] = [
         title: "Работа в Казахстане",
         text: "Отправьте нам  свое резюме  и уже совсем скоро мы с вами свяжемся, чтобы предложить подходящие для вас вакансии",
         btnTitle: "Отправить резюме",
-        path: "/"
+        path: "/",
+        type: CardType.button,
+        popupType: PopupType.sendCV
     },
-
     {
         title: "Работа в  Европе",
         text: "Оставьте заявку на трудоустройство в Европейских странах. У нас  более 34 партнеров компаний ",
         btnTitle: "Оставить заявку",
-        path: "/"
+        path: "/",
+        type: CardType.button,
+        popupType: PopupType.form
     }
 ]

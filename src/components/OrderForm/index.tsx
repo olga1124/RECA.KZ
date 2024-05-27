@@ -26,8 +26,8 @@ const OrderForm: React.FC<OrderFormProps> = ({ title, questions }) => {
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const selectedServices = Object.entries(checkedStates)
-                                       .filter(([, value]) => value)
-                                       .map(([key]) => key);
+            .filter(([, value]) => value)
+            .map(([key]) => key);
         setSelections(selectedServices);
         setPopupVisible(true);
     };
@@ -44,13 +44,13 @@ const OrderForm: React.FC<OrderFormProps> = ({ title, questions }) => {
                     <div className="checkbox-grid">
                         {questions.map(([id, label]) => (
                             <div key={id} className="checkbox-item">
-                               <input
-                                        type="checkbox"
-                                        id={id}
-                                        name={label}
-                                        checked={checkedStates[id]}
-                                        onChange={() => handleCheckboxChange(id)}
-                                    />
+                                <input
+                                    type="checkbox"
+                                    id={id}
+                                    name={label}
+                                    checked={checkedStates[label]}
+                                    onChange={() => handleCheckboxChange(label)}
+                                />
                                 <label htmlFor={id}>{label}</label>
                             </div>
                         ))}
@@ -59,7 +59,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ title, questions }) => {
                 </form>
             </div>
             <Popup trigger={isPopupVisible} setTrigger={setPopupVisible}>
-                <ContactForm selections={selections} onRemoveSelection={handleRemoveSelection}/>
+                <ContactForm selections={selections} onRemoveSelection={handleRemoveSelection} />
             </Popup>
         </>
     )
