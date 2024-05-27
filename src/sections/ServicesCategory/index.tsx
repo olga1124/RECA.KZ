@@ -1,4 +1,5 @@
-import ServiceCard, { ServiceCardProps } from "@/components/ServiceCard"
+import ServiceCard from "@/components/ServiceCard";
+import { ServiceCardProps } from "@/components/ServiceCard/ServiceCardTypes";
 
 interface Props {
     items: ServiceCardProps[];
