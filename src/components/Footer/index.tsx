@@ -13,7 +13,7 @@ const Footer = () => {
                 </div>
                 <div id="social" className="footer-row social">
                     <div className="social">
-                        <p>Мы в соц.сетях</p>
+                        <p>Контакты</p>
                         <SocialLinks color="white" />
                     </div>
                 </div>

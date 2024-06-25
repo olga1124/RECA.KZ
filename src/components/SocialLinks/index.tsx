@@ -1,5 +1,6 @@
 import Instagram from "@/assets/icons/instagram.svg";
 import Whatsapp from "@/assets/icons/whatsapp.svg";
+import Phone from "@/assets/icons/phone.svg";
 import Image from "next/image";
 
 interface SocialLinksProps {
@@ -24,6 +25,15 @@ const SocialLinks: React.FC<SocialLinksProps> = ({ color }) => {
                     width={30}
                     height={30}
                     alt="Whatsapp"
+                    style={{ filter: `invert(${color !== 'white' ? 100 : 0}%)` }}
+                />
+            </a>
+            <a href="tel:+77758887203" target="_blank">
+                <Image
+                    src={Phone}
+                    width={30}
+                    height={30}
+                    alt="Phone"
                     style={{ filter: `invert(${color !== 'white' ? 100 : 0}%)` }}
                 />
             </a>
