@@ -6,12 +6,12 @@ import { homeHero } from "@/constants/home";
 import { categories } from "@/constants/home";
 
 export default function Home() {
-  return (
-    <>
-    <Hero {...homeHero}/>
-    <ServicesCategory items={categories}/>
-    <Skills/>
-    <Contact/>
-    </>
-  );
+	return (
+		<>
+			<Hero {...homeHero} />
+			<ServicesCategory items={categories} />
+			<Skills />
+			<Contact />
+		</>
+	);
 }

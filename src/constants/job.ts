@@ -1,11 +1,18 @@
+/** @format */
+
 import { HeroProps } from "@/components/Hero";
-import { ServiceCardProps, CardType, PopupType } from "@/components/ServiceCard/ServiceCardTypes";
+import {
+    ServiceCardProps,
+    CardType,
+    PopupType,
+} from "@/components/ServiceCard/ServiceCardTypes";
 
 export const jobHero: HeroProps = {
     title: "Ищу работу",
     subtitle: "Выбери работу достойную тебя",
-    text: "В последнее время все больше людей мечтают о трудоустройстве за рубежом. Работа за границей открывает перед человеком новые возможности для саморазвития и карьерного роста. Она позволяет расширить горизонты, познакомиться с другой культурой и приобрести ценный опыт. Если и вы мечтаете о такой возможности, не стоит откладывать свои желания на потом. Обратитесь к нам сегодня, и мы поможем вам осуществить вашу мечту."
-}
+    text: "В последнее время все больше людей мечтают о трудоустройстве за рубежом. Работа за границей открывает перед человеком новые возможности для саморазвития и карьерного роста. Она позволяет расширить горизонты, познакомиться с другой культурой и приобрести ценный опыт. Если и вы мечтаете о такой возможности, не стоит откладывать свои желания на потом. Обратитесь к нам сегодня, и мы поможем вам осуществить вашу мечту.",
+    btnText: "Узнать стоимость услуг",
+};
 
 export const categories: ServiceCardProps[] = [
     {
@@ -14,7 +21,7 @@ export const categories: ServiceCardProps[] = [
         btnTitle: "Отправить резюме",
         path: "/",
         type: CardType.button,
-        popupType: PopupType.sendCV
+        popupType: PopupType.sendCV,
     },
     {
         title: "Работа в  Европе",
@@ -22,6 +29,6 @@ export const categories: ServiceCardProps[] = [
         btnTitle: "Оставить заявку",
         path: "/",
         type: CardType.button,
-        popupType: PopupType.form
-    }
-]
+        popupType: PopupType.form,
+    },
+];
