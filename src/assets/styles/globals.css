@@ -268,7 +268,7 @@ p {
 
     &:nth-child(1) {
         span {
-            color: #04426f;
+            color: #000;
         }
 
         button,
@@ -284,7 +284,7 @@ p {
 
     &:nth-child(2) {
         span {
-            color: #cf7b18;
+            color: #000;
         }
 
         button,

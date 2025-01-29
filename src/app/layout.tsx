@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import "../assets/styles/globals.css";
 import Layout from "@/components/Layout"
-
 import localFont from 'next/font/local';
 import CallbackBtn from '@/components/Buttons/CallbackBtn';
 
