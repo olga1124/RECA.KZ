@@ -8,6 +8,7 @@ export interface HeroProps {
 	subtitle: string;
 	text?: string;
 	btnText?: string;
+	suptitle?: string;
 }
 
 
@@ -15,7 +16,8 @@ const Hero: React.FC<HeroProps> = ({
 	title,
 	subtitle,
 	text,
-	btnText
+	btnText,
+	suptitle
 }) => {
 
 	const [isPopupVisible, setPopupVisible] = useState(false);
@@ -26,13 +28,15 @@ const Hero: React.FC<HeroProps> = ({
 					<div className="title">
 						<p className='hero-descr-over'>{subtitle}</p>
 						<h1>{title}</h1>
-						<p className='hero-descr-under'>80% клиентов возвращаются за нашими услугами повторно</p>
-						<button
-							onClick={() => setPopupVisible(true)}
-							className='hero-cta'
-						>
-							{btnText}
-						</button>
+						{suptitle && <p className='hero-descr-under'>{suptitle}</p>}
+						{btnText &&
+							<button
+								onClick={() => setPopupVisible(true)}
+								className='hero-cta'
+							>
+								{btnText}
+							</button>
+						}
 					</div>
 					<div className="discription" style={{ display: text && text.length !== 0 ? "block" : "none" }}>
 						<p>{text}</p>
