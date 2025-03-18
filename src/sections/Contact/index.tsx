@@ -3,26 +3,26 @@ import ContactMap from "@/components/ContactMap";
 
 const Contact = () => {
 
-    const questions: [string, string][] = [
-        ["employers", "Подбор сотрудников"],
-        ["job-eu", "Работа в Европе"],
-        ["job-kz", "Работа в Казахстане"],
-        ["colaboration", "Сотрудничество"]
-    ]
+	const questions: [string, string][] = [
+		["employers", "Подбор сотрудников"],
+		["job-eu", "Классический рекрутинг"],
+		["job-kz", "HR подписка "],
+		["colaboration", "Отправить резюме"]
+	]
 
-    return (
-        <section id="contact">
-            <div className="contact-container">
-                <div className="contact-content">
-                    <div className="order-form-wrapper">
-                        <h1>Свяжитесь <span>с нами</span></h1>
-                        <OrderForm questions={questions}/>
-                    </div>
-                    <ContactMap />
-                </div>
-            </div>
-        </section>
-    )
+	return (
+		<section id="contact">
+			<div className="contact-container">
+				<div className="contact-content">
+					<div className="order-form-wrapper">
+						<h1>Свяжитесь <span>с нами</span></h1>
+						<OrderForm questions={questions} />
+					</div>
+					<ContactMap />
+				</div>
+			</div>
+		</section>
+	)
 }
 
 export default Contact;
