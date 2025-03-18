@@ -7,7 +7,7 @@ interface Navlinks {
 
 export const navbarLinks: Navlinks[] = [
     {
-        title: "Домой",
+        title: "Главная",
         path: "/",
     },
     {
