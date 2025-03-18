@@ -271,7 +271,7 @@ p {
     }
 
     p {
-        font-size: clamp(16px, 4vw, 24px);
+        font-size: clamp(16px, 4vw, 18px);
         font-family: Arial, Helvetica, sans-serif;
     }
 
