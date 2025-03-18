@@ -1,3 +1,5 @@
+/** @format */
+
 interface Navlinks {
     title: string;
     path: string;
@@ -6,18 +8,18 @@ interface Navlinks {
 export const navbarLinks: Navlinks[] = [
     {
         title: "Домой",
-        path: "/"
+        path: "/",
     },
     {
-        title: "Работодателю",
-        path: "/employers"
+        title: "Классический рекрутинг",
+        path: "/employers",
     },
     {
-        title: "Соискателю",
-        path: "/job"
+        title: "HR-подписка",
+        path: "/job",
     },
     {
         title: "Контакты",
-        path: "/#contact"
-    }
-]
+        path: "/#contact",
+    },
+];

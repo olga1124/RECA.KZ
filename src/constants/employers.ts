@@ -4,8 +4,8 @@ import { EmployersCardProps } from "@/components/EmployersCard";
 import { HeroProps } from "@/components/Hero";
 
 export const employersHero: HeroProps = {
-    title: "Подбор персонала",
-    subtitle: "Выбери себе только лучших из лучших",
+    title: "Подбор персонала по системе Сlassic Recruit",
+    subTitle: "Выбери себе только лучших из лучших",
     text: "",
     btnText: "Узнать стоимость услуг",
 };

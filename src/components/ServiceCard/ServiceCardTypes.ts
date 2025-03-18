@@ -1,11 +1,14 @@
+/** @format */
+
 export enum CardType {
     button = "button",
-    link = "link"
+    link = "link",
 }
 
 export interface ServiceCardProps {
     title: string;
     text: string;
+    textUnder?: string;
     btnTitle: string;
     path: string;
     type: CardType;
@@ -14,5 +17,5 @@ export interface ServiceCardProps {
 
 export enum PopupType {
     form = "form",
-    sendCV = "sendCV"
+    sendCV = "sendCV",
 }

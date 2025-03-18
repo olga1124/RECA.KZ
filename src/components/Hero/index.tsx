@@ -5,19 +5,20 @@ import ContactFormHero from '../ContactFormHero';
 
 export interface HeroProps {
 	title: string;
-	subtitle: string;
 	text?: string;
+	subTitle?: string;
 	btnText?: string;
 	suptitle?: string;
+	descr?: string
 }
 
 
 const Hero: React.FC<HeroProps> = ({
 	title,
-	subtitle,
 	text,
 	btnText,
-	suptitle
+	suptitle,
+	descr
 }) => {
 
 	const [isPopupVisible, setPopupVisible] = useState(false);
@@ -26,9 +27,9 @@ const Hero: React.FC<HeroProps> = ({
 			<div className="hero-container top">
 				<div className="hero-content">
 					<div className="title">
-						<p className='hero-descr-over'>{subtitle}</p>
 						<h1>{title}</h1>
 						{suptitle && <p className='hero-descr-under'>{suptitle}</p>}
+						{descr && <p className='hero-descr-low'>{descr}</p>}
 						{btnText &&
 							<button
 								onClick={() => setPopupVisible(true)}
