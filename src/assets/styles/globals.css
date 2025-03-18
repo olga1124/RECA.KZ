@@ -553,7 +553,9 @@ input[type="checkbox"]:checked::before {
     gap: 30px;
     padding: 20px 0;
 }
-
+.information p {
+    text-align: justify;
+}
 .employers-content {
     display: flex;
     flex-direction: column;
