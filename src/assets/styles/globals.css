@@ -499,7 +499,6 @@ input[type="checkbox"]:checked::before {
 }
 
 .stages-container {
-    /* padding: 0 0 120px; */
     background-color: #f8f8f8;
 }
 
