@@ -5,7 +5,7 @@ export function headlineFormatter(title) {
 	const firstWord = words.shift();
 	const restOfTitle = words.length > 0 ? words.join(' ') : '';
 
-	return <h2 style={{ marginBottom: 30 }}>{firstWord} <span>{restOfTitle}</span></h2>
+	return <h2>{firstWord} <span>{restOfTitle}</span></h2>
 };
 
 export function subheaderFormatter(title) {
