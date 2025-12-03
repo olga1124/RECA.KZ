@@ -990,7 +990,7 @@ input[type="checkbox"]:checked::before {
     font-size: 18px;
     line-height: 1.55;
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr;
 }
 
 .reca-list > li {
@@ -1018,6 +1018,6 @@ input[type="checkbox"]:checked::before {
         width: 19%;
     }
     .reca-list {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, 1fr);
     }
 }
