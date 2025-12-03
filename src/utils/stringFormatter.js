@@ -14,5 +14,5 @@ export function subheaderFormatter(title) {
 	const firstWord = words.shift();
 	const restOfTitle = words.length > 0 ? words.join(' ') : '';
 
-	return <h2>{firstWord} <span>{restOfTitle}</span></h2>
+	return <h2 className="ttt">{firstWord} <span>{restOfTitle}</span></h2>
 };
