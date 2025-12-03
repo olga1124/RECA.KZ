@@ -83,7 +83,13 @@ p {
 .information ul {
     list-style: none;
     padding-left: 20px;
-    font-family: "Inter", sans-serif;
+}
+
+.listst {
+    list-style:initial
+}
+.listnone {
+    list-style: none;
 }
 /* Footer */
 .footer-container {
@@ -939,7 +945,6 @@ input[type="checkbox"]:checked::before {
 
 
 .reca-wrapper {
-    font-family: "Inter", sans-serif;
     line-height: 1.55;
     font-size: 18px;
     text-align: justify;
@@ -999,6 +1004,7 @@ input[type="checkbox"]:checked::before {
     display: grid;
     grid-template-columns: 1fr;
     gap: 30px;
+    list-style: none;
 }
 
 .reca-list > li {
