@@ -25,7 +25,7 @@ const AboutUs = () => {
 
 					{/* <h2>REC-A - система, которой руководит Эксперт</h2> */}
 
-					<h3 className="title">Основатель и Ведущий Эксперт REC-A  </h3><br />
+					<h3 className="title">Основатель и Ведущий Эксперт REC-A  </h3>
 					<h3 className="name">Ольга В.</h3>
 
 					<p>
