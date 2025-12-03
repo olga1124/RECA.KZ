@@ -86,7 +86,7 @@ p {
 }
 
 .listst {
-    list-style:initial
+    list-style:initial !important;
 }
 .listnone {
     list-style: none;
