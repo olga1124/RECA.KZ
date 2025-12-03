@@ -986,6 +986,7 @@ input[type="checkbox"]:checked::before {
     padding-left: 20px;
     font-size: 18px;
     line-height: 1.55;
+    text-align: left;
 }
 
 .reca-list > li {
