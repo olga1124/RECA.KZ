@@ -30,7 +30,7 @@ const AboutUs = () => {
 
 					<p>
 						С 2021 года Ольга прошла путь от ресечера до руководителя направления, 
-						построив систему, обеспечивающую услуги Executive Search (Middle & Top) 
+						построив систему, обеспечивающую услуги Executive Search <span className="fsinter">(Middle & Top) </span>
 						на самом высоком уровне.
 					</p>
 
