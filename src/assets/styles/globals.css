@@ -83,6 +83,7 @@ p {
 .information ul {
     list-style: none;
     padding-left: 20px;
+    font-family: "Inter", sans-serif;
 }
 /* Footer */
 .footer-container {
