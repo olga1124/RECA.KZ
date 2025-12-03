@@ -953,11 +953,6 @@ input[type="checkbox"]:checked::before {
     object-fit: cover;
 }
 
-@media (min-width: 768px) {
-    .reca-photo {
-        width: 19%;
-    }
-}
 
 /* Заголовки */
 .reca-wrapper h2 {
@@ -987,6 +982,8 @@ input[type="checkbox"]:checked::before {
     font-size: 18px;
     line-height: 1.55;
     text-align: left;
+    display: grid;
+    grid-template-columns: repeat(2, 1f);
 }
 
 .reca-list > li {
@@ -1006,4 +1003,14 @@ input[type="checkbox"]:checked::before {
 
 .reca-list ul li {
     margin-bottom: 6px;
+}
+
+
+@media (min-width: 768px) {
+    .reca-photo {
+        width: 19%;
+    }
+    .reca-list {
+        grid-template-columns: 1f
+    }
 }
