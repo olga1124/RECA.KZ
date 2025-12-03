@@ -974,7 +974,7 @@ input[type="checkbox"]:checked::before {
     font-size: 26px;     /* подзаголовки разделов */
     font-weight: 700;
     margin-top: 25px;
-    margin-bottom: 12px;
+    margin-bottom: 25px;
 }
 
 .reca-wrapper h4 {
@@ -992,6 +992,7 @@ input[type="checkbox"]:checked::before {
     text-align: left;
     display: grid;
     grid-template-columns: 1fr;
+    gap: 30px;
 }
 
 .reca-list > li {
