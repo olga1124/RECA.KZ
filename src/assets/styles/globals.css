@@ -1044,3 +1044,7 @@ input[type="checkbox"]:checked::before {
 .ttt {
     margin-bottom: 30px;
 }
+
+.fsinter {
+    font-family: "Inter", sans-serif !important;
+}

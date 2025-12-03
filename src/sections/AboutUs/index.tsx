@@ -64,7 +64,7 @@ const AboutUs = () => {
 							<strong>Точность оценки</strong>
 							<ul className="listst">
 								<li>Современные методики, адаптированные под бизнес-цели клиента.</li>
-								<li>Конверсия выхода кандидатов: <strong>92%</strong>.</li>
+								<li>Конверсия выхода кандидатов: <strong className="fsinter">92%</strong>.</li>
 							</ul>
 						</li>
 
@@ -72,7 +72,7 @@ const AboutUs = () => {
 							<strong>Скорость процесса</strong>
 							<ul className="listst">
 								<li>Цикл подбора оптимизирован под достижение оптимальных сроков.</li>
-								<li>Средний срок закрытия вакансий: <strong>7-18 рабочих дней</strong>.</li>
+								<li>Средний срок закрытия вакансий: <strong className="fsinter">7-18 </strong>рабочих дней.</li>
 							</ul>
 						</li>
 
@@ -80,7 +80,7 @@ const AboutUs = () => {
 							<strong>Лояльность клиентов</strong>
 							<ul className="listst">
 								<li>Стандартизированная работа и экспертный надзор дают стабильный результат.</li>
-								<li><strong>80% клиентов</strong> возвращаются с новыми проектами.</li>
+								<li><strong className="fsinter">80% </strong>клиентов возвращаются с новыми проектами.</li>
 							</ul>
 						</li>
 					</ul>
