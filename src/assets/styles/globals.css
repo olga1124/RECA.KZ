@@ -989,6 +989,7 @@ input[type="checkbox"]:checked::before {
     padding-left: 20px;
     font-size: 18px;
     line-height: 1.55;
+    text-align: left;
     display: grid;
     grid-template-columns: 1fr;
 }
@@ -1019,5 +1020,6 @@ input[type="checkbox"]:checked::before {
     }
     .reca-list {
         grid-template-columns: repeat(2, 1fr);
+        text-align: justify;
     }
 }
