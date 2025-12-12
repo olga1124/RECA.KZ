@@ -1162,7 +1162,8 @@ input[type="checkbox"]:checked::before {
     justify-content: center;
     align-items: center;
     padding: 20px;
-    z-index: 1;
+    z-index: 101;
+    overflow-y: auto;
 }
 
 .review-popup {
@@ -1172,6 +1173,8 @@ input[type="checkbox"]:checked::before {
     max-width: 600px;
     width: 100%;
     position: relative;
+    height: 100%;
+    overflow-y: auto;
 }
 
 .close-btn {
