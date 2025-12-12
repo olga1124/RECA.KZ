@@ -25,6 +25,7 @@ html {
 
 body {
     color: rgb(var(--foreground-rgb));
+    font-family: var(--font-panton) !important;
 }
 
 h1 {
@@ -240,14 +241,15 @@ p {
         font-size: clamp(24px, 4vw, 32px);
         /* text-transform: uppercase; */
         font-weight: lighter;
-        font-family: sans-serif;
+        /* font-family: sans-serif; */
         line-height: 150%;
         /* color: #04426f; */
     }
     p.hero-descr-low {
         font-size: clamp(18px, 4vw, 24px);
         line-height: 150%;
-        font-family: Arial, Helvetica, sans-serif;
+        font-family: var(--font-montserrat);
+        /* font-family: Arial, Helvetica, sans-serif; */
     }
     .hero-cta {
         font-size: 20px;
@@ -308,7 +310,7 @@ p {
 
     p {
         font-size: clamp(16px, 4vw, 20px);
-        font-family: Arial, Helvetica, sans-serif;
+        /* font-family: Arial, Helvetica, sans-serif; */
     }
 
     button,
@@ -977,6 +979,7 @@ input[type="checkbox"]:checked::before {
     line-height: 1.55;
     font-size: 18px;
     text-align: justify;
+    font-family: var(--font-montserrat);
 }
 
 .reca-wrapper .title {
@@ -1077,7 +1080,7 @@ input[type="checkbox"]:checked::before {
 }
 
 .fsinter {
-    font-family: "Inter", sans-serif !important;
+    /* font-family: "Inter", sans-serif !important; */
 }
 
 .reviews-swiper.swiper {
