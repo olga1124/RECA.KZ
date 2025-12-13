@@ -119,7 +119,7 @@ export default function RootLayout({
 }) {
 	return (
 		<html lang="ru">
-			<body className={`${pnt.variable} ${montserrat.variable}`}>
+			<body className={`${pnt.variable}`}>
 				<Layout>{children}</Layout>
 				<CallbackBtn />
 			</body>
