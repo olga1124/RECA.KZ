@@ -29,8 +29,47 @@ const panton = localFont({
 			weight: "300",
 			style: "normal",
 		},
+		{
+			path: "../assets/fonts/panton/PantonNarrow-Trial-Light.ttf",
+			weight: "300",
+			style: "normal",
+		},
+		{
+			path: "../assets/fonts/panton/PantonNarrow-Trial-Regular.ttf",
+			weight: "400",
+			style: "normal",
+		},
 	],
 	variable: "--font-panton",
+});
+
+// ========================
+// PANTON
+// ========================
+const pnt = localFont({
+	src: [
+		{
+			path: "../assets/fonts/pnt/Panton-Bold.woff2",
+			weight: "700",
+			style: "normal",
+		},
+		{
+			path: "../assets/fonts/pnt/Panton-SemiBold.woff2",
+			weight: "600",
+			style: "normal",
+		},
+		{
+			path: "../assets/fonts/pnt/Panton-Regular.woff2",
+			weight: "400",
+			style: "normal",
+		},
+		{
+			path: "../assets/fonts/pnt/Panton-Light.woff2",
+			weight: "300",
+			style: "normal",
+		},
+	],
+	variable: "--font-pnt",
 });
 
 // ========================
@@ -80,7 +119,7 @@ export default function RootLayout({
 }) {
 	return (
 		<html lang="ru">
-			<body className={`${panton.variable} ${montserrat.variable}`}>
+			<body className={`${pnt.variable} ${montserrat.variable}`}>
 				<Layout>{children}</Layout>
 				<CallbackBtn />
 			</body>
