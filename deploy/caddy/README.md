@@ -32,7 +32,7 @@ add to `Caddyfile`:
 
 ```
 reca.kz {
-    reverse_proxy app:3000
+    reverse_proxy reca-app:3000
 }
 ```
 

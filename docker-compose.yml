@@ -1,0 +1,23 @@
+# Frontend app stack. Deployed to /srv/apps/reca/frontend/ on the server.
+# Joins the existing external reca-network so Caddy can reach it as `app:3000`
+# and the app can reach Directus in-network as http://directus:8055.
+#
+# Runtime secrets come from ./.env (created once on the server, NOT in git):
+#   DIRECTUS_INTERNAL_URL=http://directus:8055
+#   DIRECTUS_SERVICE_TOKEN=<website service token>
+#   NEXT_PUBLIC_SITE_URL=https://reca.kz
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: reca-app
+    restart: unless-stopped
+    env_file: .env
+    networks:
+      - reca-network
+
+networks:
+  reca-network:
+    external: true

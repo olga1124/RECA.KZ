@@ -1,0 +1,51 @@
+name: Deploy frontend
+
+# Builds and restarts the Next.js app container on the server.
+# The Docker image is built on the server from synced source (no registry,
+# no secrets baked in — runtime env comes from /srv/apps/reca/frontend/.env).
+#
+# Required repo secrets: SSH_HOST, SSH_USER, SSH_KEY (private key).
+# After cutover, drop `v2-directus` from the branch list so only main deploys.
+
+on:
+  push:
+    branches: [main, v2-directus]
+    paths-ignore:
+      - "scripts/**"
+      - "directus/**"
+      - "deploy/**"
+      - "**.md"
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-frontend
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure SSH
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "${{ secrets.SSH_KEY }}" > ~/.ssh/id_deploy
+          chmod 600 ~/.ssh/id_deploy
+          ssh-keyscan -H "${{ secrets.SSH_HOST }}" >> ~/.ssh/known_hosts
+
+      - name: Sync source to server
+        run: |
+          rsync -az --delete \
+            --exclude '.git' \
+            --exclude 'node_modules' \
+            --exclude '.next' \
+            --exclude '.env' \
+            --exclude '.env.local' \
+            -e "ssh -i ~/.ssh/id_deploy" \
+            ./ "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/srv/apps/reca/frontend/"
+
+      - name: Build & restart container
+        run: |
+          ssh -i ~/.ssh/id_deploy "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" \
+            'cd /srv/apps/reca/frontend && docker compose up -d --build && docker image prune -f'

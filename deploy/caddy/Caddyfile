@@ -2,8 +2,8 @@
 #
 # NOTE: `reca.kz` is intentionally NOT configured here yet — its DNS still
 # points to Vercel, so an ACME (Let's Encrypt) challenge for it would fail.
-# Add the `reca.kz { reverse_proxy app:3000 }` block only during cutover,
-# once DNS for reca.kz points at this server and the `app` container is up.
+# Add the `reca.kz { reverse_proxy reca-app:3000 }` block only during cutover,
+# once DNS for reca.kz points at this server and the reca-app container is up.
 
 {
 	# Email used by Let's Encrypt for expiry notices.
