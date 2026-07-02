@@ -72,7 +72,9 @@ export async function ensureTranslations(parent, translatedFields) {
 		collection: child,
 		field: "languages_code",
 		related_collection: "languages",
-		meta: { one_field: null },
+		// junction_field points back to the parent FK so Directus recognises the
+		// full M2M (parent ↔ languages) and the translations interface renders.
+		meta: { one_field: null, junction_field: fkField },
 		schema: { on_delete: "CASCADE" },
 	});
 }

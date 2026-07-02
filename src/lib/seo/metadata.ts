@@ -5,7 +5,18 @@ import { assetUrl } from "@/lib/directus/assets";
 import type { PageData } from "@/lib/directus/types";
 import type { Locale } from "@/lib/i18n/config";
 
+import { getPage } from "@/lib/directus/queries";
+import { isLocale } from "@/lib/i18n/config";
+
 export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://reca.kz").replace(/\/$/, "");
+
+/** Fetch a page and build its metadata; shared by the home and [slug] routes. */
+export async function getPageMetadata(locale: string, permalink: string): Promise<Metadata> {
+	if (!isLocale(locale)) return {};
+	const page = await getPage(permalink, locale);
+	if (!page) return {};
+	return buildMetadata(page, locale, permalink);
+}
 
 /** Build page <head> metadata incl. hreflang alternates across locales. */
 export async function buildMetadata(page: PageData, locale: Locale, permalink: string): Promise<Metadata> {
