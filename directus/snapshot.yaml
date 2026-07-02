@@ -1571,8 +1571,8 @@ fields:
       is_generated: false
       generation_expression: null
       has_auto_increment: false
-      foreign_key_table: block_cards
-      foreign_key_column: id
+      foreign_key_table: null
+      foreign_key_column: null
   - collection: block_cards_translations
     field: languages_code
     type: string
@@ -1876,8 +1876,8 @@ fields:
       is_generated: false
       generation_expression: null
       has_auto_increment: false
-      foreign_key_table: block_contact
-      foreign_key_column: id
+      foreign_key_table: null
+      foreign_key_column: null
   - collection: block_contact_translations
     field: languages_code
     type: string
@@ -2125,8 +2125,8 @@ fields:
       is_generated: false
       generation_expression: null
       has_auto_increment: false
-      foreign_key_table: block_feature_list
-      foreign_key_column: id
+      foreign_key_table: null
+      foreign_key_column: null
   - collection: block_feature_list_translations
     field: languages_code
     type: string
@@ -2415,8 +2415,8 @@ fields:
       is_generated: false
       generation_expression: null
       has_auto_increment: false
-      foreign_key_table: block_founder_profile
-      foreign_key_column: id
+      foreign_key_table: null
+      foreign_key_column: null
   - collection: block_founder_profile_translations
     field: languages_code
     type: string
@@ -2800,8 +2800,8 @@ fields:
       is_generated: false
       generation_expression: null
       has_auto_increment: false
-      foreign_key_table: block_hero
-      foreign_key_column: id
+      foreign_key_table: null
+      foreign_key_column: null
   - collection: block_hero_translations
     field: languages_code
     type: string
@@ -3225,8 +3225,8 @@ fields:
       is_generated: false
       generation_expression: null
       has_auto_increment: false
-      foreign_key_table: block_reviews
-      foreign_key_column: id
+      foreign_key_table: null
+      foreign_key_column: null
   - collection: block_reviews_translations
     field: languages_code
     type: string
@@ -3450,8 +3450,8 @@ fields:
       is_generated: false
       generation_expression: null
       has_auto_increment: false
-      foreign_key_table: block_richtext
-      foreign_key_column: id
+      foreign_key_table: null
+      foreign_key_column: null
   - collection: block_richtext_translations
     field: languages_code
     type: string
@@ -3739,8 +3739,8 @@ fields:
       is_generated: false
       generation_expression: null
       has_auto_increment: false
-      foreign_key_table: block_stages
-      foreign_key_column: id
+      foreign_key_table: null
+      foreign_key_column: null
   - collection: block_stages_translations
     field: languages_code
     type: string
@@ -4164,8 +4164,8 @@ fields:
       is_generated: false
       generation_expression: null
       has_auto_increment: false
-      foreign_key_table: cards
-      foreign_key_column: id
+      foreign_key_table: null
+      foreign_key_column: null
   - collection: cards_translations
     field: languages_code
     type: string
@@ -4629,8 +4629,8 @@ fields:
       is_generated: false
       generation_expression: null
       has_auto_increment: false
-      foreign_key_table: feature_items
-      foreign_key_column: id
+      foreign_key_table: null
+      foreign_key_column: null
   - collection: feature_items_translations
     field: languages_code
     type: string
@@ -5162,8 +5162,8 @@ fields:
       is_generated: false
       generation_expression: null
       has_auto_increment: false
-      foreign_key_table: form_fields
-      foreign_key_column: id
+      foreign_key_table: null
+      foreign_key_column: null
   - collection: form_fields_translations
     field: languages_code
     type: string
@@ -5577,8 +5577,8 @@ fields:
       is_generated: false
       generation_expression: null
       has_auto_increment: false
-      foreign_key_table: forms
-      foreign_key_column: id
+      foreign_key_table: null
+      foreign_key_column: null
   - collection: forms_translations
     field: languages_code
     type: string
@@ -5962,8 +5962,8 @@ fields:
       is_generated: false
       generation_expression: null
       has_auto_increment: false
-      foreign_key_table: founder_principles
-      foreign_key_column: id
+      foreign_key_table: null
+      foreign_key_column: null
   - collection: founder_principles_translations
     field: languages_code
     type: string
@@ -7048,8 +7048,8 @@ fields:
       is_generated: false
       generation_expression: null
       has_auto_increment: false
-      foreign_key_table: navigation_items
-      foreign_key_column: id
+      foreign_key_table: null
+      foreign_key_column: null
   - collection: navigation_items_translations
     field: languages_code
     type: string
@@ -7627,8 +7627,8 @@ fields:
       is_generated: false
       generation_expression: null
       has_auto_increment: false
-      foreign_key_table: pages
-      foreign_key_column: id
+      foreign_key_table: null
+      foreign_key_column: null
   - collection: pages_translations
     field: languages_code
     type: string
@@ -8263,8 +8263,8 @@ fields:
       is_generated: false
       generation_expression: null
       has_auto_increment: false
-      foreign_key_table: seo
-      foreign_key_column: id
+      foreign_key_table: null
+      foreign_key_column: null
   - collection: seo_translations
     field: languages_code
     type: string
@@ -8782,8 +8782,8 @@ fields:
       is_generated: false
       generation_expression: null
       has_auto_increment: false
-      foreign_key_table: site_settings
-      foreign_key_column: id
+      foreign_key_table: null
+      foreign_key_column: null
   - collection: site_settings_translations
     field: languages_code
     type: string
@@ -9167,8 +9167,8 @@ fields:
       is_generated: false
       generation_expression: null
       has_auto_increment: false
-      foreign_key_table: stage_items
-      foreign_key_column: id
+      foreign_key_table: null
+      foreign_key_column: null
   - collection: stage_items_translations
     field: languages_code
     type: string
@@ -9512,8 +9512,8 @@ fields:
       is_generated: false
       generation_expression: null
       has_auto_increment: false
-      foreign_key_table: ui_strings
-      foreign_key_column: id
+      foreign_key_table: null
+      foreign_key_column: null
   - collection: ui_strings_translations
     field: languages_code
     type: string
@@ -9675,7 +9675,7 @@ relations:
     field: block_cards_id
     related_collection: block_cards
     meta:
-      junction_field: null
+      junction_field: languages_code
       many_collection: block_cards_translations
       many_field: block_cards_id
       one_allowed_collections: null
@@ -9684,14 +9684,6 @@ relations:
       one_deselect_action: delete
       one_field: translations
       sort_field: null
-    schema:
-      table: block_cards_translations
-      column: block_cards_id
-      foreign_key_table: block_cards
-      foreign_key_column: id
-      constraint_name: block_cards_translations_block_cards_id_foreign
-      on_update: NO ACTION
-      on_delete: CASCADE
   - collection: block_cards_translations
     field: languages_code
     related_collection: languages
@@ -9738,7 +9730,7 @@ relations:
     field: block_contact_id
     related_collection: block_contact
     meta:
-      junction_field: null
+      junction_field: languages_code
       many_collection: block_contact_translations
       many_field: block_contact_id
       one_allowed_collections: null
@@ -9747,14 +9739,6 @@ relations:
       one_deselect_action: delete
       one_field: translations
       sort_field: null
-    schema:
-      table: block_contact_translations
-      column: block_contact_id
-      foreign_key_table: block_contact
-      foreign_key_column: id
-      constraint_name: block_contact_translations_block_contact_id_foreign
-      on_update: NO ACTION
-      on_delete: CASCADE
   - collection: block_contact_translations
     field: languages_code
     related_collection: languages
@@ -9780,7 +9764,7 @@ relations:
     field: block_feature_list_id
     related_collection: block_feature_list
     meta:
-      junction_field: null
+      junction_field: languages_code
       many_collection: block_feature_list_translations
       many_field: block_feature_list_id
       one_allowed_collections: null
@@ -9789,14 +9773,6 @@ relations:
       one_deselect_action: delete
       one_field: translations
       sort_field: null
-    schema:
-      table: block_feature_list_translations
-      column: block_feature_list_id
-      foreign_key_table: block_feature_list
-      foreign_key_column: id
-      constraint_name: block_feature_list_translations_block_featu__817089f_foreign
-      on_update: NO ACTION
-      on_delete: CASCADE
   - collection: block_feature_list_translations
     field: languages_code
     related_collection: languages
@@ -9843,7 +9819,7 @@ relations:
     field: block_founder_profile_id
     related_collection: block_founder_profile
     meta:
-      junction_field: null
+      junction_field: languages_code
       many_collection: block_founder_profile_translations
       many_field: block_founder_profile_id
       one_allowed_collections: null
@@ -9852,14 +9828,6 @@ relations:
       one_deselect_action: delete
       one_field: translations
       sort_field: null
-    schema:
-      table: block_founder_profile_translations
-      column: block_founder_profile_id
-      foreign_key_table: block_founder_profile
-      foreign_key_column: id
-      constraint_name: block_founder_profile_translations_block_f__74fc4093_foreign
-      on_update: NO ACTION
-      on_delete: CASCADE
   - collection: block_founder_profile_translations
     field: languages_code
     related_collection: languages
@@ -9906,7 +9874,7 @@ relations:
     field: block_hero_id
     related_collection: block_hero
     meta:
-      junction_field: null
+      junction_field: languages_code
       many_collection: block_hero_translations
       many_field: block_hero_id
       one_allowed_collections: null
@@ -9915,14 +9883,6 @@ relations:
       one_deselect_action: delete
       one_field: translations
       sort_field: null
-    schema:
-      table: block_hero_translations
-      column: block_hero_id
-      foreign_key_table: block_hero
-      foreign_key_column: id
-      constraint_name: block_hero_translations_block_hero_id_foreign
-      on_update: NO ACTION
-      on_delete: CASCADE
   - collection: block_hero_translations
     field: languages_code
     related_collection: languages
@@ -9948,7 +9908,7 @@ relations:
     field: block_reviews_id
     related_collection: block_reviews
     meta:
-      junction_field: null
+      junction_field: languages_code
       many_collection: block_reviews_translations
       many_field: block_reviews_id
       one_allowed_collections: null
@@ -9957,14 +9917,6 @@ relations:
       one_deselect_action: delete
       one_field: translations
       sort_field: null
-    schema:
-      table: block_reviews_translations
-      column: block_reviews_id
-      foreign_key_table: block_reviews
-      foreign_key_column: id
-      constraint_name: block_reviews_translations_block_reviews_id_foreign
-      on_update: NO ACTION
-      on_delete: CASCADE
   - collection: block_reviews_translations
     field: languages_code
     related_collection: languages
@@ -9990,7 +9942,7 @@ relations:
     field: block_richtext_id
     related_collection: block_richtext
     meta:
-      junction_field: null
+      junction_field: languages_code
       many_collection: block_richtext_translations
       many_field: block_richtext_id
       one_allowed_collections: null
@@ -9999,14 +9951,6 @@ relations:
       one_deselect_action: delete
       one_field: translations
       sort_field: null
-    schema:
-      table: block_richtext_translations
-      column: block_richtext_id
-      foreign_key_table: block_richtext
-      foreign_key_column: id
-      constraint_name: block_richtext_translations_block_richtext_id_foreign
-      on_update: NO ACTION
-      on_delete: CASCADE
   - collection: block_richtext_translations
     field: languages_code
     related_collection: languages
@@ -10032,7 +9976,7 @@ relations:
     field: block_stages_id
     related_collection: block_stages
     meta:
-      junction_field: null
+      junction_field: languages_code
       many_collection: block_stages_translations
       many_field: block_stages_id
       one_allowed_collections: null
@@ -10041,14 +9985,6 @@ relations:
       one_deselect_action: delete
       one_field: translations
       sort_field: null
-    schema:
-      table: block_stages_translations
-      column: block_stages_id
-      foreign_key_table: block_stages
-      foreign_key_column: id
-      constraint_name: block_stages_translations_block_stages_id_foreign
-      on_update: NO ACTION
-      on_delete: CASCADE
   - collection: block_stages_translations
     field: languages_code
     related_collection: languages
@@ -10137,7 +10073,7 @@ relations:
     field: cards_id
     related_collection: cards
     meta:
-      junction_field: null
+      junction_field: languages_code
       many_collection: cards_translations
       many_field: cards_id
       one_allowed_collections: null
@@ -10146,14 +10082,6 @@ relations:
       one_deselect_action: delete
       one_field: translations
       sort_field: null
-    schema:
-      table: cards_translations
-      column: cards_id
-      foreign_key_table: cards
-      foreign_key_column: id
-      constraint_name: cards_translations_cards_id_foreign
-      on_update: NO ACTION
-      on_delete: CASCADE
   - collection: cards_translations
     field: languages_code
     related_collection: languages
@@ -10200,7 +10128,7 @@ relations:
     field: feature_items_id
     related_collection: feature_items
     meta:
-      junction_field: null
+      junction_field: languages_code
       many_collection: feature_items_translations
       many_field: feature_items_id
       one_allowed_collections: null
@@ -10209,14 +10137,6 @@ relations:
       one_deselect_action: delete
       one_field: translations
       sort_field: null
-    schema:
-      table: feature_items_translations
-      column: feature_items_id
-      foreign_key_table: feature_items
-      foreign_key_column: id
-      constraint_name: feature_items_translations_feature_items_id_foreign
-      on_update: NO ACTION
-      on_delete: CASCADE
   - collection: feature_items_translations
     field: languages_code
     related_collection: languages
@@ -10263,7 +10183,7 @@ relations:
     field: form_fields_id
     related_collection: form_fields
     meta:
-      junction_field: null
+      junction_field: languages_code
       many_collection: form_fields_translations
       many_field: form_fields_id
       one_allowed_collections: null
@@ -10272,14 +10192,6 @@ relations:
       one_deselect_action: delete
       one_field: translations
       sort_field: null
-    schema:
-      table: form_fields_translations
-      column: form_fields_id
-      foreign_key_table: form_fields
-      foreign_key_column: id
-      constraint_name: form_fields_translations_form_fields_id_foreign
-      on_update: NO ACTION
-      on_delete: CASCADE
   - collection: form_fields_translations
     field: languages_code
     related_collection: languages
@@ -10305,7 +10217,7 @@ relations:
     field: forms_id
     related_collection: forms
     meta:
-      junction_field: null
+      junction_field: languages_code
       many_collection: forms_translations
       many_field: forms_id
       one_allowed_collections: null
@@ -10314,14 +10226,6 @@ relations:
       one_deselect_action: delete
       one_field: translations
       sort_field: null
-    schema:
-      table: forms_translations
-      column: forms_id
-      foreign_key_table: forms
-      foreign_key_column: id
-      constraint_name: forms_translations_forms_id_foreign
-      on_update: NO ACTION
-      on_delete: CASCADE
   - collection: forms_translations
     field: languages_code
     related_collection: languages
@@ -10368,7 +10272,7 @@ relations:
     field: founder_principles_id
     related_collection: founder_principles
     meta:
-      junction_field: null
+      junction_field: languages_code
       many_collection: founder_principles_translations
       many_field: founder_principles_id
       one_allowed_collections: null
@@ -10377,14 +10281,6 @@ relations:
       one_deselect_action: delete
       one_field: translations
       sort_field: null
-    schema:
-      table: founder_principles_translations
-      column: founder_principles_id
-      foreign_key_table: founder_principles
-      foreign_key_column: id
-      constraint_name: founder_principles_translations_founder_pr__4d38cd7d_foreign
-      on_update: NO ACTION
-      on_delete: CASCADE
   - collection: founder_principles_translations
     field: languages_code
     related_collection: languages
@@ -10473,7 +10369,7 @@ relations:
     field: navigation_items_id
     related_collection: navigation_items
     meta:
-      junction_field: null
+      junction_field: languages_code
       many_collection: navigation_items_translations
       many_field: navigation_items_id
       one_allowed_collections: null
@@ -10482,14 +10378,6 @@ relations:
       one_deselect_action: delete
       one_field: translations
       sort_field: null
-    schema:
-      table: navigation_items_translations
-      column: navigation_items_id
-      foreign_key_table: navigation_items
-      foreign_key_column: id
-      constraint_name: navigation_items_translations_navigation_items_id_foreign
-      on_update: NO ACTION
-      on_delete: CASCADE
   - collection: navigation_items_translations
     field: languages_code
     related_collection: languages
@@ -10578,7 +10466,7 @@ relations:
     field: pages_id
     related_collection: pages
     meta:
-      junction_field: null
+      junction_field: languages_code
       many_collection: pages_translations
       many_field: pages_id
       one_allowed_collections: null
@@ -10587,14 +10475,6 @@ relations:
       one_deselect_action: delete
       one_field: translations
       sort_field: null
-    schema:
-      table: pages_translations
-      column: pages_id
-      foreign_key_table: pages
-      foreign_key_column: id
-      constraint_name: pages_translations_pages_id_foreign
-      on_update: NO ACTION
-      on_delete: CASCADE
   - collection: pages_translations
     field: languages_code
     related_collection: languages
@@ -10641,7 +10521,7 @@ relations:
     field: seo_id
     related_collection: seo
     meta:
-      junction_field: null
+      junction_field: languages_code
       many_collection: seo_translations
       many_field: seo_id
       one_allowed_collections: null
@@ -10650,14 +10530,6 @@ relations:
       one_deselect_action: delete
       one_field: translations
       sort_field: null
-    schema:
-      table: seo_translations
-      column: seo_id
-      foreign_key_table: seo
-      foreign_key_column: id
-      constraint_name: seo_translations_seo_id_foreign
-      on_update: NO ACTION
-      on_delete: CASCADE
   - collection: seo_translations
     field: languages_code
     related_collection: languages
@@ -10725,7 +10597,7 @@ relations:
     field: site_settings_id
     related_collection: site_settings
     meta:
-      junction_field: null
+      junction_field: languages_code
       many_collection: site_settings_translations
       many_field: site_settings_id
       one_allowed_collections: null
@@ -10734,14 +10606,6 @@ relations:
       one_deselect_action: delete
       one_field: translations
       sort_field: null
-    schema:
-      table: site_settings_translations
-      column: site_settings_id
-      foreign_key_table: site_settings
-      foreign_key_column: id
-      constraint_name: site_settings_translations_site_settings_id_foreign
-      on_update: NO ACTION
-      on_delete: CASCADE
   - collection: site_settings_translations
     field: languages_code
     related_collection: languages
@@ -10788,7 +10652,7 @@ relations:
     field: stage_items_id
     related_collection: stage_items
     meta:
-      junction_field: null
+      junction_field: languages_code
       many_collection: stage_items_translations
       many_field: stage_items_id
       one_allowed_collections: null
@@ -10797,14 +10661,6 @@ relations:
       one_deselect_action: delete
       one_field: translations
       sort_field: null
-    schema:
-      table: stage_items_translations
-      column: stage_items_id
-      foreign_key_table: stage_items
-      foreign_key_column: id
-      constraint_name: stage_items_translations_stage_items_id_foreign
-      on_update: NO ACTION
-      on_delete: CASCADE
   - collection: stage_items_translations
     field: languages_code
     related_collection: languages
@@ -10830,7 +10686,7 @@ relations:
     field: ui_strings_id
     related_collection: ui_strings
     meta:
-      junction_field: null
+      junction_field: languages_code
       many_collection: ui_strings_translations
       many_field: ui_strings_id
       one_allowed_collections: null
@@ -10839,14 +10695,6 @@ relations:
       one_deselect_action: delete
       one_field: translations
       sort_field: null
-    schema:
-      table: ui_strings_translations
-      column: ui_strings_id
-      foreign_key_table: ui_strings
-      foreign_key_column: id
-      constraint_name: ui_strings_translations_ui_strings_id_foreign
-      on_update: NO ACTION
-      on_delete: CASCADE
   - collection: ui_strings_translations
     field: languages_code
     related_collection: languages

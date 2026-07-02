@@ -57,7 +57,14 @@ export async function ensureTranslations(parent, translatedFields) {
 		collection: child,
 		field: fkField,
 		related_collection: parent,
-		meta: { one_field: "translations", sort_field: null, one_deselect_action: "delete" },
+		meta: {
+			one_field: "translations",
+			// junction_field points at the language relation so the admin
+			// translations interface knows which field holds the locale.
+			junction_field: "languages_code",
+			sort_field: null,
+			one_deselect_action: "delete",
+		},
 		schema: { on_delete: "CASCADE" },
 	});
 
