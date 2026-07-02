@@ -1,0 +1,17 @@
+# Caddy reverse proxy for the reca.kz stack.
+#
+# NOTE: `reca.kz` is intentionally NOT configured here yet — its DNS still
+# points to Vercel, so an ACME (Let's Encrypt) challenge for it would fail.
+# Add the `reca.kz { reverse_proxy app:3000 }` block only during cutover,
+# once DNS for reca.kz points at this server and the `app` container is up.
+
+{
+	# Email used by Let's Encrypt for expiry notices.
+	email admin@reca.kz
+}
+
+adm.reca.kz {
+	# `directus` is resolvable over the shared external `reca-network`
+	# (docker compose registers the service name as a network alias).
+	reverse_proxy directus:8055
+}

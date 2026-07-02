@@ -1,0 +1,32 @@
+# Standalone Caddy stack — shared reverse proxy / TLS terminator for the
+# whole reca.kz deployment. Runs independently of the frontend app lifecycle
+# so it can serve adm.reca.kz (Directus) before the frontend is deployed.
+#
+# Deploy to the server at /srv/apps/reca/caddy/ and run:
+#   docker compose up -d
+#
+# It joins the existing external `reca-network`, so it can reach the
+# `directus` container by name without exposing any Directus ports publicly.
+
+services:
+  caddy:
+    image: caddy:2-alpine
+    container_name: reca-caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - reca-network
+
+volumes:
+  caddy_data:
+  caddy_config:
+
+networks:
+  reca-network:
+    external: true
