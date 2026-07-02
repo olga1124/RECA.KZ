@@ -21,7 +21,7 @@ export const siteSettings = {
 	tr: {
 		ru: { site_name: "REC-A", footer_text: "<p>REC-A — рекрутинговое агентство полного цикла.</p>" },
 		kz: { site_name: "REC-A", footer_text: "<p>REC-A — толық циклді рекрутинг агенттігі.</p>" },
-		en: { site_name: "REC-A", footer_text: "<p>REC-A — a full-cycle recruitment agency.</p>" },
+		en: { site_name: "REC-A", footer_text: "<p>REC-A is a full-cycle recruitment agency.</p>" },
 	},
 };
 
