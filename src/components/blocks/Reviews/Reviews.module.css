@@ -1,0 +1,14 @@
+.section {
+}
+
+.container {
+	max-width: 1400px;
+	margin: 0 auto;
+	padding: 30px 20px;
+}
+
+.title {
+	font-size: 32px;
+	font-weight: 600;
+	margin-bottom: 20px;
+}

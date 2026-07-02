@@ -190,13 +190,14 @@ async function blocks() {
 
 async function pagesBase() {
 	log("pages (base)");
+	// Pages are a language-agnostic structure: slug + which blocks + which SEO.
+	// Text lives in the (translated) blocks and SEO — the page itself is not
+	// translated (single slug, the locale prefix separates languages).
 	await ensureCollection("pages", { meta: { icon: "web", note: "Site pages (page builder)", sort_field: "sort" }, schema: {} });
 	await ensureField("pages", "status", STATUS_FIELD);
 	await ensureField("pages", "sort", SORT_FIELD);
-	await ensureTranslations("pages", [
-		{ field: "permalink", ...str({ meta: { note: "URL path within the language, e.g. /employers" } }) },
-		{ field: "title", ...str({ meta: { note: "Internal admin title" } }) },
-	]);
+	await ensureField("pages", "seo_url", str({ meta: { note: "URL path (same across languages), e.g. /employers", width: "half" }, schema: { is_unique: true } }));
+	await ensureField("pages", "title", str({ meta: { note: "Internal admin title (not rendered)", width: "half" } }));
 }
 
 async function pagesRelations() {
@@ -265,19 +266,39 @@ async function siteSettings() {
 	]);
 }
 
-async function navigation() {
-	log("navigation_items");
-	await ensureCollection("navigation_items", { meta: { icon: "menu", note: "Header navigation", sort_field: "sort" }, schema: {} });
-	await ensureField("navigation_items", "link_type", dropdown(
-		[{ text: "Page", value: "page" }, { text: "Anchor", value: "anchor" }, { text: "External", value: "external" }],
-		{ schema: { default_value: "page" } },
-	));
-	await m2oField("navigation_items", "page", "pages");
-	await ensureField("navigation_items", "anchor", str({ meta: { note: "e.g. #contact" } }));
-	await ensureField("navigation_items", "external_url", str());
-	await ensureField("navigation_items", "open_in_new_tab", bool());
-	await ensureField("navigation_items", "sort", SORT_FIELD);
-	await ensureTranslations("navigation_items", [{ field: "title", ...str() }]);
+const LINK_TYPE = dropdown(
+	[{ text: "Page", value: "page" }, { text: "Anchor", value: "anchor" }, { text: "External", value: "external" }],
+	{ schema: { default_value: "page" } },
+);
+
+/** Add the standard destination fields (page/anchor/external) to a link collection. */
+async function linkFields(collection) {
+	await ensureField(collection, "link_type", LINK_TYPE);
+	await m2oField(collection, "page", "pages");
+	await ensureField(collection, "anchor", str({ meta: { note: "e.g. #contact" } }));
+	await ensureField(collection, "external_url", str());
+	await ensureField(collection, "open_in_new_tab", bool());
+	await ensureField(collection, "sort", SORT_FIELD);
+}
+
+async function navbar() {
+	log("navbar_links");
+	await ensureCollection("navbar_links", { meta: { icon: "menu", note: "Header navigation links", sort_field: "sort" }, schema: {} });
+	await linkFields("navbar_links");
+	await ensureTranslations("navbar_links", [{ field: "title", ...str() }]);
+}
+
+async function footer() {
+	log("footer_sections + footer_links");
+	// A footer is columns ("sections"), each with a heading and a list of links.
+	await ensureCollection("footer_sections", { meta: { icon: "view_column", note: "Footer columns (heading + links)", sort_field: "sort" }, schema: {} });
+	await ensureField("footer_sections", "sort", SORT_FIELD);
+	await ensureCollection("footer_links", { meta: { icon: "link", note: "Link in a footer column", sort_field: "sort", hidden: true }, schema: {} });
+	await m2oField("footer_links", "footer_section", "footer_sections", { oneField: "links", onDelete: "CASCADE" });
+	await linkFields("footer_links");
+	await o2m("footer_sections", "links", "footer_links", "footer_section");
+	await ensureTranslations("footer_sections", [{ field: "title", ...str() }]);
+	await ensureTranslations("footer_links", [{ field: "label", ...str() }]);
 }
 
 async function uiStrings() {
@@ -306,7 +327,8 @@ async function main() {
 	await leads();
 	await applicants();
 	await siteSettings();
-	await navigation();
+	await navbar();
+	await footer();
 	await uiStrings();
 
 	console.log("\n✓ Schema provisioned.");

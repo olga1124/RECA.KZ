@@ -33,6 +33,8 @@ export const uiStrings = {
 	"common.read_full": { ru: "Читать полностью", kz: "Толық оқу", en: "Read full" },
 	"common.close": { ru: "Закрыть", kz: "Жабу", en: "Close" },
 	"common.director": { ru: "Директор", kz: "Директор", en: "Director" },
+	"common.next": { ru: "Далее", kz: "Келесі", en: "Next" },
+	"common.back": { ru: "Назад", kz: "Артқа", en: "Back" },
 	"form.name": { ru: "Ваше имя", kz: "Атыңыз", en: "Your name" },
 	"form.email": { ru: "Email", kz: "Email", en: "Email" },
 	"form.phone": { ru: "Мобильный", kz: "Ұялы телефон", en: "Phone" },
@@ -83,13 +85,34 @@ export const reviews = [
 	},
 ];
 
-// ── Navigation ──────────────────────────────────────────────────────────────
+// ── Navbar ────────────────────────────────────────────────────────────────
 
-export const navigation = [
+export const navbar = [
 	{ link_type: "page", permalink: "/", sort: 1, title: { ru: "Главная", kz: "Басты бет", en: "Home" } },
 	{ link_type: "page", permalink: "/employers", sort: 2, title: { ru: "Классический рекрутинг", kz: "Классикалық рекрутинг", en: "Classic recruiting" } },
 	{ link_type: "page", permalink: "/job", sort: 3, title: { ru: "HR-подписка", kz: "HR-жазылым", en: "HR subscription" } },
 	{ link_type: "anchor", anchor: "#contact", sort: 4, title: { ru: "Контакты", kz: "Байланыс", en: "Contacts" } },
+];
+
+// ── Footer (columns: a heading + a list of links) ───────────────────────────
+
+export const footer = [
+	{
+		sort: 1,
+		title: { ru: "Меню", kz: "Мәзір", en: "Menu" },
+		links: [
+			{ link_type: "page", permalink: "/", sort: 1, label: { ru: "Главная", kz: "Басты бет", en: "Home" } },
+			{ link_type: "page", permalink: "/employers", sort: 2, label: { ru: "Классический рекрутинг", kz: "Классикалық рекрутинг", en: "Classic recruiting" } },
+			{ link_type: "page", permalink: "/job", sort: 3, label: { ru: "HR-подписка", kz: "HR-жазылым", en: "HR subscription" } },
+		],
+	},
+	{
+		sort: 2,
+		title: { ru: "Контакты", kz: "Байланыс", en: "Contacts" },
+		links: [
+			{ link_type: "anchor", anchor: "#contact", sort: 1, label: { ru: "Оставить заявку", kz: "Өтінім қалдыру", en: "Leave a request" } },
+		],
+	},
 ];
 
 // ── Forms ────────────────────────────────────────────────────────────────

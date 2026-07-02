@@ -1,0 +1,87 @@
+.swiper {
+	padding-bottom: 40px;
+}
+
+.swiper :global(.swiper-pagination-bullet-active) {
+	background-color: #04426f;
+}
+
+.item {
+	background: #f8f8f8;
+	padding: 30px;
+	border-radius: 30px;
+}
+
+.stars {
+	display: flex;
+	gap: 5px;
+}
+
+.company {
+	font-size: 22px;
+	margin-top: 10px;
+}
+
+.director {
+	font-size: 16px;
+	color: #666;
+	margin-bottom: 15px;
+}
+
+.director span {
+	color: #000;
+	font-weight: bold;
+}
+
+.text {
+	text-align: justify;
+	overflow: hidden;
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 4;
+}
+
+.readMore {
+	margin-top: 10px;
+	color: #cf7b18;
+	cursor: pointer;
+	border: none;
+	background: none;
+	font-weight: 600;
+}
+
+.modal {
+	position: fixed;
+	inset: 0;
+	background: rgba(0, 0, 0, 0.7);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding: 20px;
+	z-index: 101;
+	overflow-y: auto;
+}
+
+.popup {
+	background: #fff;
+	padding: 30px;
+	border-radius: 12px;
+	max-width: 600px;
+	width: 100%;
+	position: relative;
+	max-height: 90vh;
+	overflow-y: auto;
+}
+
+.full {
+	text-align: justify;
+	white-space: pre-line;
+}
+
+.close {
+	cursor: pointer;
+	position: absolute;
+	top: 20px;
+	right: 24px;
+	font-size: 20px;
+}

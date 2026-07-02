@@ -9,7 +9,7 @@ import { readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import { api, BASE, TOKEN } from "./lib.mjs";
-import { siteSettings, uiStrings, reviews, navigation, forms } from "./content.mjs";
+import { siteSettings, uiStrings, reviews, navbar, footer, forms } from "./content.mjs";
 import { pages } from "./content-pages.mjs";
 
 const PUBLIC = join(dirname(fileURLToPath(import.meta.url)), "..", "..", "public");
@@ -17,7 +17,7 @@ const LANGS = ["ru", "kz", "en"];
 
 // Parent collections; their translations/children cascade on delete.
 const CONTENT_COLLECTIONS = [
-	"pages", "seo", "reviews", "navigation_items", "ui_strings", "forms",
+	"pages", "seo", "reviews", "navbar_links", "footer_sections", "ui_strings", "forms",
 	"block_hero", "block_cards", "block_stages", "block_reviews", "block_richtext",
 	"block_founder_profile", "block_feature_list", "block_contact",
 ];
@@ -156,8 +156,9 @@ async function seedPages(ctx) {
 		const created = await api("POST", "/items/pages", {
 			status: "published",
 			sort: pages.indexOf(page) + 1,
+			seo_url: page.permalink.ru, // single slug, same across languages
+			title: page.adminTitle.ru,
 			seo: { translations: toTranslations(page.seo) },
-			translations: LANGS.map((l) => ({ languages_code: l, permalink: page.permalink[l], title: page.adminTitle[l] })),
 			blocks: blockRefs,
 		});
 		permalinkToId[page.permalink.ru] = created.id;
@@ -177,13 +178,30 @@ async function seedPages(ctx) {
 	return permalinkToId;
 }
 
-async function seedNavigation(permalinkToId) {
-	console.log(`navigation_items (${navigation.length})`);
-	for (const n of navigation) {
+async function seedNavbar(permalinkToId) {
+	console.log(`navbar_links (${navbar.length})`);
+	for (const n of navbar) {
 		const { title, permalink, ...base } = n;
 		const payload = { ...base, translations: LANGS.map((l) => ({ languages_code: l, title: title[l] })) };
 		if (permalink && permalinkToId[permalink]) payload.page = permalinkToId[permalink];
-		await api("POST", "/items/navigation_items", payload);
+		await api("POST", "/items/navbar_links", payload);
+	}
+}
+
+async function seedFooter(permalinkToId) {
+	console.log(`footer_sections (${footer.length})`);
+	for (const section of footer) {
+		const links = section.links.map((lnk) => {
+			const { label, permalink, ...base } = lnk;
+			const row = { ...base, translations: LANGS.map((l) => ({ languages_code: l, label: label[l] })) };
+			if (permalink && permalinkToId[permalink]) row.page = permalinkToId[permalink];
+			return row;
+		});
+		await api("POST", "/items/footer_sections", {
+			sort: section.sort,
+			translations: LANGS.map((l) => ({ languages_code: l, title: section.title[l] })),
+			links,
+		});
 	}
 }
 
@@ -206,7 +224,8 @@ async function main() {
 	await seedUiStrings();
 	await seedReviews();
 	const permalinkToId = await seedPages(ctx);
-	await seedNavigation(permalinkToId);
+	await seedNavbar(permalinkToId);
+	await seedFooter(permalinkToId);
 
 	console.log("\n✓ Content seeded.");
 }

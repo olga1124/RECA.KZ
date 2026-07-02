@@ -82,25 +82,25 @@ async function main() {
 		console.log("= access role→policy (exists)");
 	}
 
-	// 5. Service user with a fresh static token
+	// 5. Service user. Keep the existing token on re-runs (only permissions
+	//    change); a brand-new user gets a fresh static token.
 	const users = await api("GET", `/users?filter[email][_eq]=${encodeURIComponent(USER_EMAIL)}&limit=1`);
-	const token = randomBytes(24).toString("base64url");
 	let user = Array.isArray(users) && users.length ? users[0] : null;
 	if (!user) {
+		const token = randomBytes(24).toString("base64url");
 		user = await api("POST", "/users", {
 			first_name: "Website", last_name: "Service",
 			email: USER_EMAIL, role: role.id, token, status: "active",
 		});
 		console.log("+ user", user.id);
+		console.log("\n─────────────────────────────────────────────");
+		console.log("DIRECTUS_SERVICE_TOKEN=" + token);
+		console.log("─────────────────────────────────────────────");
+		console.log("Put this in the frontend .env (server-side only).");
 	} else {
-		await api("PATCH", `/users/${user.id}`, { role: role.id, token, status: "active" });
-		console.log("= user (rotated token)", user.id);
+		await api("PATCH", `/users/${user.id}`, { role: role.id, status: "active" });
+		console.log("= user (token unchanged, permissions refreshed)", user.id);
 	}
-
-	console.log("\n─────────────────────────────────────────────");
-	console.log("DIRECTUS_SERVICE_TOKEN=" + token);
-	console.log("─────────────────────────────────────────────");
-	console.log("Put this in the frontend .env (server-side only).");
 }
 
 main().catch((err) => {
