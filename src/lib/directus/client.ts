@@ -5,15 +5,21 @@ import "server-only";
  * through here with the limited "Website Service" static token — the browser
  * never talks to Directus directly.
  *
+ * Env is read LAZILY (at call time), not at module load: `next build` collects
+ * page data with no runtime env set, so a top-level throw would fail the build.
+ * At runtime the container has the vars (injected via env_file).
+ *
  * DIRECTUS_INTERNAL_URL is the in-network docker URL in production
  * (http://directus:8055) and the public URL for local development.
  */
-const DIRECTUS_URL = process.env.DIRECTUS_INTERNAL_URL;
-const TOKEN = process.env.DIRECTUS_SERVICE_TOKEN;
-
-if (!DIRECTUS_URL || !TOKEN) {
-	throw new Error("DIRECTUS_INTERNAL_URL and DIRECTUS_SERVICE_TOKEN must be set");
+function required(name: string): string {
+	const value = process.env[name];
+	if (!value) throw new Error(`${name} must be set`);
+	return value;
 }
+
+export const directusUrl = () => required("DIRECTUS_INTERNAL_URL");
+export const directusToken = () => required("DIRECTUS_SERVICE_TOKEN");
 
 type GqlResult<T> = { data?: T; errors?: { message: string }[] };
 
@@ -22,11 +28,11 @@ export async function directusQuery<T>(
 	query: string,
 	variables?: Record<string, unknown>,
 ): Promise<T> {
-	const res = await fetch(`${DIRECTUS_URL}/graphql`, {
+	const res = await fetch(`${directusUrl()}/graphql`, {
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
-			Authorization: `Bearer ${TOKEN}`,
+			Authorization: `Bearer ${directusToken()}`,
 		},
 		body: JSON.stringify({ query, variables }),
 		cache: "no-store",
@@ -40,5 +46,3 @@ export async function directusQuery<T>(
 	}
 	return json.data as T;
 }
-
-export { DIRECTUS_URL, TOKEN };

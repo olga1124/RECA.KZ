@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { DIRECTUS_URL, TOKEN } from "@/lib/directus/client";
+import { directusUrl, directusToken } from "@/lib/directus/client";
 import { isLocale } from "@/lib/i18n/config";
 
 /**
@@ -34,9 +34,9 @@ async function getUploadFolder(): Promise<string | null> {
 }
 
 async function directus(path: string, init: RequestInit) {
-	return fetch(`${DIRECTUS_URL}${path}`, {
+	return fetch(`${directusUrl()}${path}`, {
 		...init,
-		headers: { Authorization: `Bearer ${TOKEN}`, ...(init.headers ?? {}) },
+		headers: { Authorization: `Bearer ${directusToken()}`, ...(init.headers ?? {}) },
 	});
 }
 

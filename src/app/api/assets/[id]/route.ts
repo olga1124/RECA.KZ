@@ -1,5 +1,5 @@
 import { NextRequest } from "next/server";
-import { DIRECTUS_URL, TOKEN } from "@/lib/directus/client";
+import { directusUrl, directusToken } from "@/lib/directus/client";
 
 /**
  * Streams a Directus file through the server using the service token, so the
@@ -13,8 +13,8 @@ export async function GET(req: NextRequest, ctx: { params: Promise<{ id: string 
 	const qs = new URLSearchParams();
 	for (const [k, v] of incoming) if (ALLOWED.has(k)) qs.set(k, v);
 
-	const upstream = await fetch(`${DIRECTUS_URL}/assets/${id}${qs.toString() ? `?${qs}` : ""}`, {
-		headers: { Authorization: `Bearer ${TOKEN}` },
+	const upstream = await fetch(`${directusUrl()}/assets/${id}${qs.toString() ? `?${qs}` : ""}`, {
+		headers: { Authorization: `Bearer ${directusToken()}` },
 	});
 	if (!upstream.ok || !upstream.body) {
 		return new Response("Not found", { status: 404 });
