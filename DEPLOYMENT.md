@@ -24,10 +24,14 @@ external `reca-network`:
 
 ## CI/CD (GitHub Actions → server)
 
-`.github/workflows/deploy.yml` on push:
-1. rsyncs the repo source to `/srv/apps/reca/frontend/` (keeps the server `.env`).
-2. `docker compose up -d --build` — the image is built on the server; no secrets
-   are baked in, runtime env comes from `.env`.
+`.github/workflows/deploy.yml` on push builds in CI and ships only the compiled
+output — no source and no `next build` on the VPS:
+1. `npm ci && npm run build` on the GitHub runner (ample RAM).
+2. assembles the Next standalone bundle (`.next/standalone` + `.next/static` +
+   `public`) plus the runtime `Dockerfile`/`docker-compose.yml` into `dist/`.
+3. rsyncs `dist/` to `/srv/apps/reca/frontend/` (`--delete`, keeps the server `.env`).
+4. `docker compose up -d --build` — a thin runtime image (COPY + `node server.js`),
+   no secrets baked in; runtime env comes from `.env`.
 
 Required repo secrets:
 

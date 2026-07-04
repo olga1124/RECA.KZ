@@ -1,6 +1,6 @@
-# Frontend app stack. Deployed to /srv/apps/reca/frontend/ on the server.
-# Joins the existing external reca-network so Caddy can reach it as `app:3000`
-# and the app can reach Directus in-network as http://directus:8055.
+# Frontend app stack on the server (/srv/apps/reca/frontend/).
+# The build context is the CI-assembled standalone bundle synced next to this
+# file — the server only builds a thin runtime image (COPY + run), no source.
 #
 # Runtime secrets come from ./.env (created once on the server, NOT in git):
 #   DIRECTUS_INTERNAL_URL=http://directus:8055
