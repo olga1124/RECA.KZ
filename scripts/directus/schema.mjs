@@ -34,6 +34,7 @@ const SORT_FIELD = { type: "integer", meta: { interface: "input", hidden: true }
 const BLOCK_COLLECTIONS = [
 	"block_hero", "block_cards", "block_stages", "block_reviews",
 	"block_richtext", "block_founder_profile", "block_feature_list", "block_contact", "block_cta",
+	"block_form",
 ];
 
 // ── Base collections ──────────────────────────────────────────────────────
@@ -85,6 +86,9 @@ async function forms() {
 	));
 	await ensureField("form_fields", "required", bool());
 	await ensureField("form_fields", "width", dropdown(["full", "half"], { schema: { default_value: "full" } }));
+	await ensureField("form_fields", "choices_collection", str({
+		meta: { note: "Select options come from this collection (e.g. positions) instead of the choices JSON", width: "half" },
+	}));
 	await ensureField("form_fields", "sort", SORT_FIELD);
 	await o2m("forms", "fields", "form_fields", "form"); // alias on forms, FK already made by m2oField
 	await ensureTranslations("form_fields", [
@@ -192,6 +196,11 @@ async function blocks() {
 		{ field: "eyebrow", ...str() }, { field: "heading", ...str() },
 		{ field: "subheading", ...text() }, { field: "button_label", ...str() },
 	]);
+
+	log("block_form");
+	await ensureCollection("block_form", { meta: { icon: "assignment_ind", note: "Inline form block (heading + form on page)" }, schema: {} });
+	await m2oField("block_form", "form", "forms", { meta: { note: "Form rendered on the page" } });
+	await ensureTranslations("block_form", [{ field: "heading", ...str() }, { field: "subheading", ...text() }]);
 }
 
 // ── Pages (base + relations) ───────────────────────────────────────────────
@@ -237,6 +246,22 @@ async function leads() {
 	await ensureField("leads", "date_created", dateCreated());
 }
 
+/**
+ * Job positions dictionary: feeds the CV form dropdown (via
+ * form_fields.choices_collection) and is referenced by applicants.position,
+ * so resumes can be filtered/sorted by a stable value in the admin.
+ */
+async function positions() {
+	log("positions");
+	await ensureCollection("positions", {
+		meta: { icon: "badge", note: "Job positions (CV form dropdown / applicants filter)", sort_field: "sort", display_template: "{{name}}" },
+		schema: {},
+	});
+	await ensureField("positions", "name", str({ meta: { note: "Canonical (RU) title — shown in admin" } }));
+	await ensureField("positions", "sort", SORT_FIELD);
+	await ensureTranslations("positions", [{ field: "name", ...str() }]);
+}
+
 /** Ensure a directus_files folder exists (uploads are routed into it by name). */
 async function ensureFolder(name) {
 	const found = await api("GET", `/folders?filter[name][_eq]=${encodeURIComponent(name)}&limit=1`);
@@ -257,9 +282,10 @@ async function applicants() {
 		{ schema: { default_value: "new" }, meta: { width: "half" } },
 	));
 	await ensureField("applicants", "name", str());
+	await ensureField("applicants", "last_name", str());
 	await ensureField("applicants", "email", str());
 	await ensureField("applicants", "phone", str());
-	await ensureField("applicants", "position", str({ meta: { note: "Desired position" } }));
+	await m2oField("applicants", "position", "positions", { meta: { note: "Desired position" } });
 	await fileField("applicants", "file");
 	await ensureField("applicants", "details", json({ meta: { note: "Answers to form fields without a dedicated column" } }));
 	await m2oField("applicants", "source_page", "pages");
@@ -350,6 +376,7 @@ async function main() {
 	await blocks();
 	await pagesRelations();
 	await leads();
+	await positions();
 	await applicants();
 	await siteSettings();
 	await navbar();

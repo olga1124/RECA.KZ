@@ -278,4 +278,26 @@ const contact = {
 	],
 };
 
-export const pages = [home, employers, job, contact];
+// ── UPLOAD CV ───────────────────────────────────────────────────────────────
+
+const uploadCv = {
+	permalink: t("/upload-cv", "/upload-cv", "/upload-cv"),
+	adminTitle: t("Отправить резюме", "Түйіндеме жіберу", "Send CV"),
+	seo: {
+		ru: { title: "Отправить резюме | REC-A", meta_description: "Загрузите резюме — мы добавим вас в базу кандидатов REC-A и свяжемся, когда появится подходящая вакансия." },
+		kz: { title: "Түйіндеме жіберу | REC-A", meta_description: "Түйіндемеңізді жүктеңіз — сізді REC-A кандидаттар базасына қосамыз және қолайлы вакансия пайда болғанда байланысамыз." },
+		en: { title: "Send your CV | REC-A", meta_description: "Upload your CV and we will add you to the REC-A candidate base and reach out when a suitable vacancy appears." },
+	},
+	blocks: [
+		{
+			type: "block_form", form: "cv",
+			tr: {
+				ru: { heading: "Отправьте резюме", subheading: "Заполните форму и прикрепите резюме — мы добавим вас в базу кандидатов REC-A и свяжемся, когда появится подходящая вакансия." },
+				kz: { heading: "Түйіндеме жіберіңіз", subheading: "Форманы толтырып, түйіндемеңізді тіркеңіз — сізді REC-A кандидаттар базасына қосамыз және қолайлы вакансия пайда болғанда байланысамыз." },
+				en: { heading: "Send your CV", subheading: "Fill in the form and attach your CV — we will add you to the REC-A candidate base and reach out when a suitable vacancy appears." },
+			},
+		},
+	],
+};
+
+export const pages = [home, employers, job, contact, uploadCv];

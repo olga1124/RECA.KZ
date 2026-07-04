@@ -1,0 +1,38 @@
+.section {
+	padding-block: var(--section-y);
+}
+
+/* Narrower than the default container: a lone form reads better in one column. */
+.container {
+	max-width: 760px;
+	margin-inline: auto;
+	padding-inline: var(--container-px);
+}
+
+.header {
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+	margin-bottom: clamp(28px, 5vw, 48px);
+}
+
+.subtitle {
+	font-size: var(--fs-md);
+	line-height: var(--lh-normal);
+	color: var(--ink-2);
+	max-width: 52ch;
+}
+
+.formCard {
+	background: var(--surface);
+	border: 1px solid var(--line);
+	border-radius: var(--r-lg);
+	padding: clamp(24px, 4vw, 44px);
+}
+
+/* Inside the tinted card, form controls sit on white for contrast. */
+.formCard input,
+.formCard textarea,
+.formCard select {
+	background: var(--bg);
+}

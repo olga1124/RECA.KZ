@@ -60,6 +60,7 @@ query Page($permalink: String!, $lang: String!) {
         }
         ... on block_contact { show_map form { id } translations${TR_FILTER} { languages_code { code } heading } }
         ... on block_cta { form { id } translations${TR_FILTER} { languages_code { code } eyebrow heading subheading button_label } }
+        ... on block_form { form { id } translations${TR_FILTER} { languages_code { code } heading subheading } }
       }
     }
   }
@@ -148,6 +149,11 @@ function mapBlocks(raw: RawPage["blocks"], locale: Locale): BlockData[] {
 				out.push({ collection: "block_cta", data: {
 					eyebrow: t.eyebrow, heading: t.heading, subheading: t.subheading,
 					button_label: t.button_label, formId: it.form?.id ?? null,
+				} });
+				break;
+			case "block_form":
+				out.push({ collection: "block_form", data: {
+					heading: t.heading, subheading: t.subheading, formId: it.form?.id ?? null,
 				} });
 				break;
 		}
@@ -263,13 +269,32 @@ export const getUiStrings = cache(async (locale: Locale) => {
 	return (key: string, fallback = "") => map.get(key) || fallback;
 });
 
+/**
+ * Options for select fields backed by a dictionary collection (see
+ * form_fields.choices_collection, e.g. `positions`). The stored value is the
+ * item id — a stable reference the target collection's M2O column points at.
+ * The dictionary must have translated `name` and a `sort` field.
+ */
+const getCollectionChoices = cache(async (collection: string, locale: Locale) => {
+	const q = `query($lang: String!) {
+		${collection}(sort: ["sort"], limit: -1) {
+			id translations${TR_FILTER} { languages_code { code } name }
+		}
+	}`;
+	const data = await directusQuery<Record<string, any[]>>(q, { lang: locale });
+	return (data?.[collection] ?? []).map((item) => ({
+		value: String(item.id),
+		label: ((pickTr(item.translations, locale) as any).name as string) ?? "",
+	}));
+});
+
 export const getForm = cache(async (id: string, locale: Locale): Promise<FormData | null> => {
 	const q = `query($id: ID!, $lang: String!) {
 		forms_by_id(id: $id) {
 			id target_collection
 			translations${TR_FILTER} { languages_code { code } title submit_label success_message }
 			fields(sort: ["sort"]) {
-				name type required width
+				name type required width choices_collection
 				translations${TR_FILTER} { languages_code { code } label placeholder help_text choices }
 			}
 		}
@@ -283,13 +308,15 @@ export const getForm = cache(async (id: string, locale: Locale): Promise<FormDat
 		title: t.title,
 		submit_label: t.submit_label,
 		success_message: t.success_message,
-		fields: (forms_by_id.fields ?? []).map((f: any) => {
+		fields: await Promise.all((forms_by_id.fields ?? []).map(async (f: any) => {
 			const ft = pickTr(f.translations, locale) as any;
 			return {
 				name: f.name, type: f.type, required: f.required, width: f.width,
 				label: ft.label, placeholder: ft.placeholder, help_text: ft.help_text,
-				choices: ft.choices ?? undefined,
+				choices: f.choices_collection
+					? await getCollectionChoices(f.choices_collection, locale)
+					: ft.choices ?? undefined,
 			};
-		}),
+		})),
 	};
 });

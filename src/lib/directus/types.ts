@@ -13,7 +13,8 @@ export type BlockType =
 	| "block_founder_profile"
 	| "block_feature_list"
 	| "block_contact"
-	| "block_cta";
+	| "block_cta"
+	| "block_form";
 
 export interface HeroBlock {
 	title: string;
@@ -95,6 +96,12 @@ export interface CtaBlock {
 	formId?: string | null;
 }
 
+export interface FormBlock {
+	heading?: string;
+	subheading?: string;
+	formId?: string | null;
+}
+
 export type BlockData =
 	| { collection: "block_hero"; data: HeroBlock }
 	| { collection: "block_cards"; data: CardsBlock }
@@ -104,7 +111,8 @@ export type BlockData =
 	| { collection: "block_founder_profile"; data: FounderProfileBlock }
 	| { collection: "block_feature_list"; data: FeatureListBlock }
 	| { collection: "block_contact"; data: ContactBlock }
-	| { collection: "block_cta"; data: CtaBlock };
+	| { collection: "block_cta"; data: CtaBlock }
+	| { collection: "block_form"; data: FormBlock };
 
 export interface PageSeo {
 	title?: string;

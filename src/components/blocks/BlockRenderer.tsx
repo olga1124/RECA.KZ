@@ -9,6 +9,7 @@ import FounderProfile from "./FounderProfile/FounderProfile";
 import FeatureList from "./FeatureList/FeatureList";
 import Contact from "./Contact/Contact";
 import Cta from "./Cta/Cta";
+import FormSection from "./FormSection/FormSection";
 
 /**
  * Renders a page's blocks in order. Adding a block type = a new case here + a
@@ -37,6 +38,8 @@ export default function BlockRenderer({ blocks, locale }: { blocks: BlockData[];
 						return <Contact key={i} data={block.data} locale={locale} />;
 					case "block_cta":
 						return <Cta key={i} data={block.data} locale={locale} />;
+					case "block_form":
+						return <FormSection key={i} data={block.data} locale={locale} />;
 					default:
 						return null;
 				}

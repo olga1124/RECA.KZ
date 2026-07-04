@@ -9,7 +9,7 @@ import { readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import { api, BASE, TOKEN } from "./lib.mjs";
-import { siteSettings, uiStrings, reviews, navbar, footer, forms } from "./content.mjs";
+import { siteSettings, uiStrings, reviews, navbar, footer, forms, cvPositions } from "./content.mjs";
 import { pages } from "./content-pages.mjs";
 
 const PUBLIC = join(dirname(fileURLToPath(import.meta.url)), "..", "..", "public");
@@ -19,7 +19,7 @@ const LANGS = ["ru", "kz", "en"];
 const CONTENT_COLLECTIONS = [
 	"pages", "seo", "reviews", "navbar_links", "footer_sections", "ui_strings", "forms",
 	"block_hero", "block_cards", "block_stages", "block_reviews", "block_richtext",
-	"block_founder_profile", "block_feature_list", "block_contact", "block_cta",
+	"block_founder_profile", "block_feature_list", "block_contact", "block_cta", "block_form",
 ];
 
 // ── helpers ─────────────────────────────────────────────────────────────────
@@ -91,6 +91,28 @@ async function seedReviews() {
 	console.log(`reviews (${reviews.length})`);
 	let sort = 1;
 	for (const r of reviews) await api("POST", "/items/reviews", { ...r, status: "published", sort: sort++ });
+}
+
+/**
+ * Positions are a dictionary, not content: applicants.position references them,
+ * so they are upserted by RU name and never deleted here. Renames/translation
+ * fixes of existing rows are done in the Directus admin.
+ */
+async function seedPositions() {
+	console.log(`positions (${cvPositions.length})`);
+	const existing = await api("GET", "/items/positions?fields=id,name&limit=-1");
+	const byName = new Map((existing ?? []).map((p) => [p.name, p.id]));
+	let sort = 1;
+	for (const p of cvPositions) {
+		if (!byName.has(p.ru)) {
+			await api("POST", "/items/positions", {
+				name: p.ru,
+				sort,
+				translations: LANGS.map((l) => ({ languages_code: l, name: p[l] })),
+			});
+		}
+		sort++;
+	}
 }
 
 async function seedForms() {
@@ -222,6 +244,7 @@ async function main() {
 		logoDark: await uploadFile("logo-light.svg", "seed:logo-dark"),
 		founder: await uploadFile("reca-founder.jpeg", "seed:reca-founder"),
 	};
+	await seedPositions();
 	const ctx = { forms: await seedForms(), files: { "reca-founder.jpeg": files.founder } };
 
 	await seedSiteSettings(files);

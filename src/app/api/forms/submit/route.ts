@@ -13,7 +13,7 @@ import { isLocale } from "@/lib/i18n/config";
 // Form fields outside these sets are stored in the `details` JSON column.
 const COLUMNS: Record<"leads" | "applicants", Set<string>> = {
 	leads: new Set(["name", "email", "phone", "subject", "company", "position", "selections"]),
-	applicants: new Set(["name", "email", "phone", "position", "file"]),
+	applicants: new Set(["name", "last_name", "email", "phone", "position", "file"]),
 };
 
 // Uploaded CVs are filed into this directus_files folder (created by schema.mjs)
@@ -41,14 +41,17 @@ async function directus(path: string, init: RequestInit) {
 }
 
 async function loadForm(id: string) {
-	const q = `query($id: ID!) { forms_by_id(id: $id) { target_collection fields { name type } } }`;
+	const q = `query($id: ID!) { forms_by_id(id: $id) { target_collection fields { name type choices_collection } } }`;
 	const res = await directus("/graphql", {
 		method: "POST",
 		headers: { "Content-Type": "application/json" },
 		body: JSON.stringify({ query: q, variables: { id } }),
 	});
 	const json = await res.json();
-	return json?.data?.forms_by_id as { target_collection: "leads" | "applicants"; fields: { name: string; type: string }[] } | null;
+	return json?.data?.forms_by_id as {
+		target_collection: "leads" | "applicants";
+		fields: { name: string; type: string; choices_collection?: string | null }[];
+	} | null;
 }
 
 export async function POST(req: NextRequest) {
@@ -63,22 +66,26 @@ export async function POST(req: NextRequest) {
 			return NextResponse.json({ error: "invalid form" }, { status: 400 });
 		}
 
-		const allowed = new Map(form.fields.map((f) => [f.name, f.type]));
+		const allowed = new Map(form.fields.map((f) => [f.name, f]));
 		const record: Record<string, unknown> = {};
 		const details: Record<string, unknown> = {};
 
 		// Scalar / array fields (only those declared on the form). Fields that
 		// match a real column are stored directly; the rest go into `details`,
 		// so editors can add arbitrary fields to a form without schema changes.
+		// Dictionary-backed selects (choices_collection) carry an item id — the
+		// M2O column expects a number, and "" (nothing chosen) must become null.
 		for (const [k, v] of Object.entries(payload)) {
-			if (!allowed.has(k) || allowed.get(k) === "file") continue;
-			if (COLUMNS[form.target_collection].has(k)) record[k] = v;
-			else details[k] = v;
+			const f = allowed.get(k);
+			if (!f || f.type === "file") continue;
+			const value = f.choices_collection ? Number(v) || null : v;
+			if (COLUMNS[form.target_collection].has(k)) record[k] = value;
+			else details[k] = value;
 		}
 		if (Object.keys(details).length > 0) record.details = details;
 
 		// File fields → upload, store the file id
-		for (const [name, type] of allowed) {
+		for (const [name, { type }] of allowed) {
 			if (type !== "file") continue;
 			const file = fd.get(`file_${name}`);
 			if (file instanceof File && file.size > 0) {

@@ -1,16 +1,30 @@
 "use client";
 import { useMemo, useState } from "react";
+import { Paperclip, Upload } from "lucide-react";
+import PhoneInput, { isValidPhoneNumber, type Value as PhoneValue } from "react-phone-number-input";
+import flags from "react-phone-number-input/flags";
+import ruLabels from "react-phone-number-input/locale/ru.json";
+import enLabels from "react-phone-number-input/locale/en.json";
 import type { FormData as FormDef, FormField } from "@/lib/directus/types";
+import type { Locale } from "@/lib/i18n/config";
 import styles from "./DynamicForm.module.css";
 
 export interface FormUiStrings {
+	locale: Locale;
 	sending: string;
 	successTitle: string;
 	errorTitle: string;
 	errorText: string;
+	phoneInvalid: string;
 	next: string;
 	back: string;
 }
+
+// Kazakhstan first, then a divider, then every other country (sorted by the
+// localized name). No Kazakh country-name pack in the library — KZ falls back
+// to the Russian labels.
+const COUNTRY_ORDER: ("KZ" | "|" | "...")[] = ["KZ", "|", "..."];
+const countryLabels = (locale: Locale) => (locale === "en" ? enLabels : ruLabels);
 
 type Values = Record<string, string | string[] | File | null>;
 
@@ -29,6 +43,7 @@ export default function DynamicForm({ form, ui }: { form: FormDef; ui: FormUiStr
 	const [step, setStep] = useState(0);
 	const [values, setValues] = useState<Values>({});
 	const [status, setStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
+	const [phoneErrors, setPhoneErrors] = useState<string[]>([]);
 
 	const set = (name: string, value: Values[string]) => setValues((v) => ({ ...v, [name]: value }));
 
@@ -39,6 +54,21 @@ export default function DynamicForm({ form, ui }: { form: FormDef; ui: FormUiStr
 
 	async function submit(e: React.FormEvent) {
 		e.preventDefault();
+
+		// libphonenumber check: PhoneInput's inner input always shows the dial
+		// code, so HTML5 `required` can't catch an empty or invalid number.
+		const badPhones = form.fields
+			.filter((f) => f.type === "tel")
+			.filter((f) => {
+				const v = typeof values[f.name] === "string" ? (values[f.name] as string) : "";
+				return f.required ? !isValidPhoneNumber(v || "") : Boolean(v) && !isValidPhoneNumber(v);
+			})
+			.map((f) => f.name);
+		if (badPhones.length > 0) {
+			setPhoneErrors(badPhones);
+			return;
+		}
+
 		setStatus("sending");
 		const payload: Record<string, unknown> = {};
 		const fd = new FormData();
@@ -98,7 +128,16 @@ export default function DynamicForm({ form, ui }: { form: FormDef; ui: FormUiStr
 
 			<div className={styles.fields}>
 				{steps[step].map((f) => (
-					<Field key={f.name} field={f} value={values[f.name]} set={set} toggleMulti={toggleMulti} />
+					<Field
+						key={f.name}
+						field={f}
+						value={values[f.name]}
+						set={set}
+						toggleMulti={toggleMulti}
+						ui={ui}
+						phoneInvalid={phoneErrors.includes(f.name)}
+						onPhoneEdit={() => phoneErrors.length > 0 && setPhoneErrors((p) => p.filter((n) => n !== f.name))}
+					/>
 				))}
 			</div>
 
@@ -129,11 +168,17 @@ function Field({
 	value,
 	set,
 	toggleMulti,
+	ui,
+	phoneInvalid,
+	onPhoneEdit,
 }: {
 	field: FormField;
 	value: Values[string];
 	set: (name: string, value: Values[string]) => void;
 	toggleMulti: (name: string, option: string) => void;
+	ui: FormUiStrings;
+	phoneInvalid: boolean;
+	onPhoneEdit: () => void;
 }) {
 	const half = field.width === "half";
 	const wrapCls = `${styles.field} ${half ? styles.half : ""}`;
@@ -148,6 +193,28 @@ function Field({
 		) : null;
 
 	switch (field.type) {
+		case "tel":
+			return (
+				<label className={wrapCls}>
+					<Label />
+					<PhoneInput
+						international
+						countryCallingCodeEditable={false}
+						defaultCountry="KZ"
+						countryOptionsOrder={COUNTRY_ORDER}
+						flags={flags}
+						labels={countryLabels(ui.locale)}
+						className={`${styles.phone} ${phoneInvalid ? styles.phoneBad : ""}`}
+						value={((value as string) || undefined) as PhoneValue | undefined}
+						onChange={(v) => {
+							set(field.name, v ?? "");
+							onPhoneEdit();
+						}}
+						numberInputProps={{ className: styles.control, "aria-label": field.label, "aria-invalid": phoneInvalid }}
+					/>
+					{phoneInvalid && <span className={styles.fieldError}>{ui.phoneInvalid}</span>}
+				</label>
+			);
 		case "textarea":
 			return (
 				<label className={wrapCls}>
@@ -202,9 +269,12 @@ function Field({
 			return (
 				<label className={wrapCls}>
 					<Label />
-					<span className={styles.file}>
+					<span className={`${styles.file} ${value instanceof File ? styles.fileFilled : ""}`}>
 						<input type="file" name={field.name} required={field.required} onChange={(e) => set(field.name, e.target.files?.[0] ?? null)} />
-						{(value instanceof File ? value.name : field.help_text) ?? field.placeholder ?? "…"}
+						<span className={styles.fileIcon}>{value instanceof File ? <Paperclip size={18} /> : <Upload size={18} />}</span>
+						<span className={styles.fileText}>
+							{(value instanceof File ? value.name : field.help_text) ?? field.placeholder ?? "…"}
+						</span>
 					</span>
 				</label>
 			);

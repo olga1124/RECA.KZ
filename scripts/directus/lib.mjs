@@ -81,7 +81,8 @@ export async function ensureField(collection, field, def = {}) {
 
 /**
  * Create a relation if an equivalent one doesn't already exist
- * (matched by collection + field).
+ * (matched by collection + field). For M2A relations, syncs
+ * `one_allowed_collections` so newly declared block types get linked.
  */
 export async function ensureRelation(relation) {
 	const existing = await api("GET", "/relations", null, { allowStatus: [403, 404] });
@@ -91,6 +92,15 @@ export async function ensureRelation(relation) {
 			)
 		: null;
 	if (found) {
+		const want = relation.meta?.one_allowed_collections;
+		const have = found.meta?.one_allowed_collections;
+		if (want && JSON.stringify([...want].sort()) !== JSON.stringify([...(have ?? [])].sort())) {
+			await api("PATCH", `/relations/${relation.collection}/${relation.field}`, {
+				meta: { one_allowed_collections: want },
+			});
+			console.log(`  ~ relation ${relation.collection}.${relation.field} (allowed collections updated)`);
+			return;
+		}
 		console.log(`  = relation ${relation.collection}.${relation.field} (exists)`);
 		return;
 	}

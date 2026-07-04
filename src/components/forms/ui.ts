@@ -7,10 +7,12 @@ import type { FormUiStrings } from "./DynamicForm";
 export async function getFormUi(locale: Locale): Promise<FormUiStrings> {
 	const t = await getUiStrings(locale);
 	return {
+		locale,
 		sending: t("form.sending", "…"),
 		successTitle: t("form.success_title", "Спасибо"),
 		errorTitle: t("form.error_title", "Ошибка"),
 		errorText: t("form.error_text", "Попробуйте позже"),
+		phoneInvalid: t("form.phone_invalid", "Проверьте номер телефона"),
 		next: t("common.next", "Далее"),
 		back: t("common.back", "Назад"),
 	};

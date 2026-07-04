@@ -38,6 +38,7 @@ export const uiStrings = {
 	"form.name": { ru: "Ваше имя", kz: "Атыңыз", en: "Your name" },
 	"form.email": { ru: "Email", kz: "Email", en: "Email" },
 	"form.phone": { ru: "Мобильный", kz: "Ұялы телефон", en: "Phone" },
+	"form.phone_invalid": { ru: "Проверьте номер телефона", kz: "Телефон нөмірін тексеріңіз", en: "Please check the phone number" },
 	"form.message": { ru: "Сообщение", kz: "Хабарлама", en: "Message" },
 	"form.sending": { ru: "Отправка информации", kz: "Ақпарат жіберілуде", en: "Sending" },
 	"form.success_title": { ru: "Спасибо за ваше обращение", kz: "Өтінішіңізге рахмет", en: "Thank you for your request" },
@@ -127,6 +128,7 @@ export const footer = [
 		title: { ru: "Контакты", kz: "Байланыс", en: "Contacts" },
 		links: [
 			{ link_type: "page", permalink: "/contact", sort: 1, label: { ru: "Оставить заявку", kz: "Өтінім қалдыру", en: "Leave a request" } },
+			{ link_type: "page", permalink: "/upload-cv", sort: 2, label: { ru: "Отправить резюме", kz: "Түйіндеме жіберу", en: "Send CV" } },
 		],
 	},
 ];
@@ -138,6 +140,91 @@ export const footer = [
 //
 // One form per context: contact (universal), hire (employer request),
 // subscription (Recruit Flow), cv (job seeker), callback (quick call).
+
+// Job positions dictionary → seeded into the `positions` collection (upsert by
+// RU name, never wiped: applicants.position references these rows). The CV form
+// dropdown reads them via form_fields.choices_collection; labels are localized,
+// English/international titles (HR Manager, Team Lead, …) stay as-is everywhere.
+export const cvPositions = [
+	{ ru: "Менеджер по продажам B2B", kz: "B2B сату менеджері", en: "B2B Sales Manager" },
+	{ ru: "Менеджер по продажам", kz: "Сату менеджері", en: "Sales Manager" },
+	{ ru: "Региональный менеджер", kz: "Аймақтық менеджер", en: "Regional Manager" },
+	{ ru: "Региональный директор по продажам", kz: "Аймақтық сату директоры", en: "Regional Sales Director" },
+	{ ru: "Территориальный менеджер", kz: "Аумақтық менеджер", en: "Territory Manager" },
+	{ ru: "Менеджер по развитию бизнеса", kz: "Бизнесті дамыту менеджері", en: "Business Development Manager" },
+	{ ru: "Менеджер по работе с ключевыми клиентами (KAM)", kz: "Негізгі клиенттермен жұмыс менеджері (KAM)", en: "Key Account Manager (KAM)" },
+	{ ru: "Руководитель отдела продаж", kz: "Сату бөлімінің басшысы", en: "Head of Sales" },
+	{ ru: "Директор по продажам", kz: "Сату жөніндегі директор", en: "Sales Director" },
+	{ ru: "Коммерческий директор", kz: "Коммерциялық директор", en: "Commercial Director" },
+	{ ru: "Директор по развитию", kz: "Даму жөніндегі директор", en: "Development Director" },
+	{ ru: "Business Development Manager", kz: "Business Development Manager", en: "Business Development Manager" },
+	{ ru: "Директор филиала", kz: "Филиал директоры", en: "Branch Director" },
+	{ ru: "Исполнительный директор", kz: "Атқарушы директор", en: "Executive Director" },
+	{ ru: "Операционный директор", kz: "Операциялық директор", en: "Chief Operating Officer (COO)" },
+	{ ru: "Генеральный директор", kz: "Бас директор", en: "Chief Executive Officer (CEO)" },
+	{ ru: "Менеджер по закупкам", kz: "Сатып алу менеджері", en: "Procurement Manager" },
+	{ ru: "Руководитель отдела закупок", kz: "Сатып алу бөлімінің басшысы", en: "Head of Procurement" },
+	{ ru: "Директор по закупкам", kz: "Сатып алу жөніндегі директор", en: "Procurement Director" },
+	{ ru: "Специалист по ВЭД", kz: "СЭҚ маманы", en: "Foreign Trade Specialist" },
+	{ ru: "Логист", kz: "Логист", en: "Logistics Specialist" },
+	{ ru: "Менеджер по логистике", kz: "Логистика менеджері", en: "Logistics Manager" },
+	{ ru: "Руководитель отдела логистики", kz: "Логистика бөлімінің басшысы", en: "Head of Logistics" },
+	{ ru: "Директор по логистике", kz: "Логистика жөніндегі директор", en: "Logistics Director" },
+	{ ru: "Начальник склада", kz: "Қойма меңгерушісі", en: "Warehouse Manager" },
+	{ ru: "Главный бухгалтер", kz: "Бас бухгалтер", en: "Chief Accountant" },
+	{ ru: "Заместитель главного бухгалтера", kz: "Бас бухгалтердің орынбасары", en: "Deputy Chief Accountant" },
+	{ ru: "Бухгалтер", kz: "Бухгалтер", en: "Accountant" },
+	{ ru: "Бухгалтер по налогам", kz: "Салық бухгалтері", en: "Tax Accountant" },
+	{ ru: "Бухгалтер по заработной плате", kz: "Жалақы бухгалтері", en: "Payroll Accountant" },
+	{ ru: "Финансовый менеджер", kz: "Қаржы менеджері", en: "Finance Manager" },
+	{ ru: "Финансовый аналитик", kz: "Қаржы талдаушысы", en: "Financial Analyst" },
+	{ ru: "Финансовый директор", kz: "Қаржы директоры", en: "Chief Financial Officer (CFO)" },
+	{ ru: "Аудитор", kz: "Аудитор", en: "Auditor" },
+	{ ru: "Казначей", kz: "Қазынашы", en: "Treasurer" },
+	{ ru: "Экономист", kz: "Экономист", en: "Economist" },
+	{ ru: "HR Manager", kz: "HR Manager", en: "HR Manager" },
+	{ ru: "HR Generalist", kz: "HR Generalist", en: "HR Generalist" },
+	{ ru: "HR Business Partner", kz: "HR Business Partner", en: "HR Business Partner" },
+	{ ru: "HR Director", kz: "HR Director", en: "HR Director" },
+	{ ru: "Руководитель отдела персонала", kz: "Персонал бөлімінің басшысы", en: "Head of HR Department" },
+	{ ru: "Рекрутер", kz: "Рекрутер", en: "Recruiter" },
+	{ ru: "Senior Recruiter", kz: "Senior Recruiter", en: "Senior Recruiter" },
+	{ ru: "Менеджер по обучению и развитию", kz: "Оқыту және дамыту менеджері", en: "Learning & Development Manager" },
+	{ ru: "Маркетолог", kz: "Маркетолог", en: "Marketing Specialist" },
+	{ ru: "Digital Marketing Manager", kz: "Digital Marketing Manager", en: "Digital Marketing Manager" },
+	{ ru: "Бренд-менеджер", kz: "Бренд-менеджер", en: "Brand Manager" },
+	{ ru: "PR Manager", kz: "PR Manager", en: "PR Manager" },
+	{ ru: "Руководитель отдела маркетинга", kz: "Маркетинг бөлімінің басшысы", en: "Head of Marketing" },
+	{ ru: "Директор по маркетингу", kz: "Маркетинг жөніндегі директор", en: "Marketing Director" },
+	{ ru: "Project Manager", kz: "Project Manager", en: "Project Manager" },
+	{ ru: "Business Analyst", kz: "Business Analyst", en: "Business Analyst" },
+	{ ru: "System Analyst", kz: "System Analyst", en: "System Analyst" },
+	{ ru: "Product Manager", kz: "Product Manager", en: "Product Manager" },
+	{ ru: "Руководитель проектов", kz: "Жобалар басшысы", en: "Head of Projects" },
+	{ ru: "Team Lead", kz: "Team Lead", en: "Team Lead" },
+	{ ru: "Системный администратор", kz: "Жүйелік әкімші", en: "System Administrator" },
+	{ ru: "Разработчик", kz: "Әзірлеуші", en: "Software Developer" },
+	{ ru: "Технический директор", kz: "Техникалық директор", en: "Chief Technical Officer (CTO)" },
+	{ ru: "Начальник производства", kz: "Өндіріс бастығы", en: "Production Manager" },
+	{ ru: "Директор производства", kz: "Өндіріс директоры", en: "Production Director" },
+	{ ru: "Главный инженер", kz: "Бас инженер", en: "Chief Engineer" },
+	{ ru: "Главный технолог", kz: "Бас технолог", en: "Chief Technologist" },
+	{ ru: "Инженер-технолог", kz: "Инженер-технолог", en: "Process Engineer" },
+	{ ru: "Начальник цеха", kz: "Цех бастығы", en: "Workshop Manager" },
+	{ ru: "Руководитель службы качества", kz: "Сапа қызметінің басшысы", en: "Head of Quality" },
+	{ ru: "Директор по качеству", kz: "Сапа жөніндегі директор", en: "Quality Director" },
+	{ ru: "Руководитель строительного проекта", kz: "Құрылыс жобасының басшысы", en: "Construction Project Manager" },
+	{ ru: "Главный инженер проекта (ГИП)", kz: "Жобаның бас инженері", en: "Chief Project Engineer" },
+	{ ru: "Директор по строительству", kz: "Құрылыс жөніндегі директор", en: "Construction Director" },
+	{ ru: "Руководитель ПТО", kz: "Өндірістік-техникалық бөлімнің басшысы", en: "Head of Production & Technical Department" },
+	{ ru: "Инженер ПТО", kz: "Өндірістік-техникалық бөлімнің инженері", en: "Production & Technical Department Engineer" },
+	{ ru: "Сметчик", kz: "Сметші", en: "Cost Estimator" },
+	{ ru: "Главный архитектор проекта", kz: "Жобаның бас сәулетшісі", en: "Chief Project Architect" },
+	{ ru: "Архитектор", kz: "Сәулетші", en: "Architect" },
+	{ ru: "Офис-менеджер", kz: "Офис-менеджер", en: "Office Manager" },
+	{ ru: "Юрист", kz: "Заңгер", en: "Lawyer" },
+	{ ru: "Руководитель юридического отдела", kz: "Заң бөлімінің басшысы", en: "Head of Legal" },
+];
 
 export const forms = {
 	contact: {
@@ -300,17 +387,19 @@ export const forms = {
 		fields: [
 			{ name: "name", type: "text", required: true, width: "half", sort: 1, tr: {
 				ru: { label: "Ваше имя", placeholder: "Имя" }, kz: { label: "Атыңыз", placeholder: "Аты" }, en: { label: "Your name", placeholder: "Name" } } },
-			{ name: "phone", type: "tel", required: true, width: "half", sort: 2, tr: {
+			{ name: "last_name", type: "text", required: true, width: "half", sort: 2, tr: {
+				ru: { label: "Фамилия", placeholder: "Фамилия" }, kz: { label: "Тегі", placeholder: "Тегі" }, en: { label: "Last name", placeholder: "Last name" } } },
+			{ name: "phone", type: "tel", required: true, width: "half", sort: 3, tr: {
 				ru: { label: "Телефон", placeholder: "+7" }, kz: { label: "Телефон", placeholder: "+7" }, en: { label: "Phone", placeholder: "+7" } } },
-			{ name: "email", type: "email", required: false, width: "half", sort: 3, tr: {
+			{ name: "email", type: "email", required: true, width: "half", sort: 4, tr: {
 				ru: { label: "Email", placeholder: "Email" }, kz: { label: "Email", placeholder: "Email" }, en: { label: "Email", placeholder: "Email" } } },
-			{ name: "position", type: "text", required: false, width: "half", sort: 4, tr: {
-				ru: { label: "Желаемая должность", placeholder: "Например: финансовый аналитик" },
-				kz: { label: "Қалаған лауазым", placeholder: "Мысалы: қаржы талдаушысы" },
-				en: { label: "Desired position", placeholder: "e.g. Financial analyst" } } },
-			{ name: "file", type: "file", required: true, width: "full", sort: 5, tr: {
+			{ name: "position", type: "select", required: false, width: "full", sort: 5, choices_collection: "positions", tr: {
+				ru: { label: "Желаемая должность", placeholder: "Выберите должность" },
+				kz: { label: "Қалаған лауазым", placeholder: "Лауазымды таңдаңыз" },
+				en: { label: "Desired position", placeholder: "Select a position" } } },
+			{ name: "file", type: "file", required: true, width: "full", sort: 6, tr: {
 				ru: { label: "Резюме", help_text: "PDF, DOC, DOCX" }, kz: { label: "Түйіндеме", help_text: "PDF, DOC, DOCX" }, en: { label: "CV", help_text: "PDF, DOC, DOCX" } } },
-			{ name: "cover_letter", type: "textarea", required: false, width: "full", sort: 6, tr: {
+			{ name: "cover_letter", type: "textarea", required: false, width: "full", sort: 7, tr: {
 				ru: { label: "Сопроводительное письмо", placeholder: "Пара слов о себе и вашем опыте" },
 				kz: { label: "Ілеспе хат", placeholder: "Өзіңіз және тәжірибеңіз туралы бірер сөз" },
 				en: { label: "Cover letter", placeholder: "A few words about you and your experience" } } },
