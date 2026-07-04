@@ -19,7 +19,7 @@ const LANGS = ["ru", "kz", "en"];
 const CONTENT_COLLECTIONS = [
 	"pages", "seo", "reviews", "navbar_links", "footer_sections", "ui_strings", "forms",
 	"block_hero", "block_cards", "block_stages", "block_reviews", "block_richtext",
-	"block_founder_profile", "block_feature_list", "block_contact",
+	"block_founder_profile", "block_feature_list", "block_contact", "block_cta",
 ];
 
 // ── helpers ─────────────────────────────────────────────────────────────────
@@ -134,7 +134,11 @@ async function createBlock(block, ctx) {
 			return row;
 		});
 	}
-	if (items) payload.items = items.map((i) => { const { tr, ...ib } = i; return { ...ib, translations: toTranslations(tr) }; });
+	if (items) {
+		const rows = items.map((i) => { const { tr, ...ib } = i; return { ...ib, translations: toTranslations(tr) }; });
+		// block_stages exposes its o2m as `stage_items`; block_feature_list uses `items`.
+		payload[type === "block_stages" ? "stage_items" : "items"] = rows;
+	}
 	if (principles) payload.principles = principles.map((p) => ({ translations: toTranslations(p.tr) }));
 
 	const created = await api("POST", `/items/${type}`, payload);

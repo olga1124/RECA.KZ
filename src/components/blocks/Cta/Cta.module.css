@@ -1,0 +1,113 @@
+.section {
+	padding-block: var(--section-y);
+}
+
+.container {
+	max-width: var(--container-max);
+	margin-inline: auto;
+	padding-inline: var(--container-px);
+}
+
+.band {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	text-align: center;
+	gap: clamp(18px, 2.5vw, 24px);
+	background:
+		radial-gradient(560px 420px at 14% -20%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 70%),
+		radial-gradient(680px 520px at 90% 130%, color-mix(in srgb, var(--brand-600) 60%, transparent), transparent 72%),
+		linear-gradient(120deg, var(--brand) 0%, var(--brand-700) 100%);
+	color: var(--on-dark);
+	border-radius: var(--r-lg);
+	padding: clamp(32px, 5vw, 56px) clamp(24px, 5vw, 72px);
+	overflow: hidden;
+}
+
+/* Oversized hairline rings — quiet ornament for the empty corners. */
+.band::before,
+.band::after {
+	content: "";
+	position: absolute;
+	aspect-ratio: 1;
+	border: 3px solid color-mix(in srgb, var(--on-dark) 16%, transparent);
+	border-radius: var(--r-pill);
+	pointer-events: none;
+}
+
+.band::before {
+	width: min(720px, 70vw);
+	right: -8%;
+	top: 0;
+	transform: translateY(-70%);
+}
+
+.band::after {
+	width: min(640px, 60vw);
+	left: -6%;
+	bottom: 0;
+	transform: translateY(72%);
+}
+
+.text {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 16px;
+}
+
+.eyebrow {
+	display: inline-flex;
+	padding: 8px 16px;
+	border: 1px solid color-mix(in srgb, var(--on-dark) 28%, transparent);
+	border-radius: var(--r-pill);
+	background: color-mix(in srgb, var(--on-dark) 8%, transparent);
+	font-size: var(--fs-xs);
+	font-weight: var(--fw-bold);
+	letter-spacing: var(--ls-caps);
+	text-transform: uppercase;
+}
+
+.heading {
+	max-width: 22ch;
+	font-size: var(--fs-2xl);
+	font-weight: var(--fw-extra);
+	line-height: var(--lh-tight);
+	letter-spacing: var(--ls-tight);
+	color: var(--on-dark);
+}
+
+.subheading {
+	max-width: 52ch;
+	font-size: var(--fs-md);
+	line-height: var(--lh-normal);
+	color: var(--on-dark-2);
+}
+
+.button {
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	font-size: var(--fs-md);
+	font-weight: var(--fw-semibold);
+	color: var(--on-dark);
+	background: var(--accent);
+	padding: 18px 48px;
+	border-radius: var(--r-sm);
+	cursor: pointer;
+	transition: background var(--dur) var(--ease), transform var(--dur) var(--ease);
+}
+
+.button:hover {
+	background: var(--accent-600);
+	transform: translateY(-2px);
+}
+
+@media (max-width: 520px) {
+	.button {
+		width: 100%;
+	}
+}

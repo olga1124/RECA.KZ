@@ -1,13 +1,21 @@
 "use client";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { FaBars, FaTimes } from "react-icons/fa";
+import { House, Menu, X } from "lucide-react";
 import { assetUrl } from "@/lib/directus/assets";
 import { localeHref } from "@/lib/i18n/href";
 import type { Locale } from "@/lib/i18n/config";
-import type { NavItem } from "@/lib/directus/types";
-import SocialLinks from "@/components/SocialLinks";
+import type { NavItem, SocialLink } from "@/lib/directus/types";
 import LanguageSwitcher from "./LanguageSwitcher";
+import SocialLinks from "@/components/SocialLinks";
+import styles from "./Navbar.module.css";
+
+export interface NavbarLabels {
+	home: string;
+	menu: string;
+	close: string;
+	contact: string;
+}
 
 /** Resolve a nav item to an href for the current locale. */
 function hrefFor(locale: Locale, item: NavItem): string {
@@ -20,66 +28,100 @@ export default function Navbar({
 	locale,
 	nav,
 	logoId,
+	labels,
+	phone,
+	socialLinks,
 }: {
 	locale: Locale;
 	nav: NavItem[];
 	logoId?: string | null;
+	labels: NavbarLabels;
+	phone?: string;
+	socialLinks?: SocialLink[];
 }) {
 	const [open, setOpen] = useState(false);
 
+	// Lock body scroll while the drawer is open (with scrollbar compensation,
+	// same pattern as ModalProvider); close on Escape.
 	useEffect(() => {
-		const onResize = () => window.innerWidth >= 768 && setOpen(false);
-		window.addEventListener("resize", onResize);
-		return () => window.removeEventListener("resize", onResize);
-	}, []);
+		if (!open) return;
+		const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
+		const scrollbar = window.innerWidth - document.documentElement.clientWidth;
+		document.documentElement.style.setProperty("--scrollbar-comp", `${scrollbar}px`);
+		document.body.style.overflow = "hidden";
+		window.addEventListener("keydown", onKey);
+		return () => {
+			document.documentElement.style.removeProperty("--scrollbar-comp");
+			document.body.style.overflow = "";
+			window.removeEventListener("keydown", onKey);
+		};
+	}, [open]);
 
+	// The drawer/scrim must live OUTSIDE <header>: its backdrop-filter makes it
+	// the containing block for fixed descendants, trapping them in the bar.
 	return (
-		<div className="z-[100] w-full max-h-16 bg-white border-b border-[#F3F3F3]-500 flex items-center justify-between px-6 py-2 h-24 fixed top-0 left-0 right-0 nav">
-			<div className="container flex justify-between items-center">
-				<div className="block">
-					<Link href={localeHref(locale, "/")} rel="noreferrer">
+		<>
+			<header className={styles.header}>
+				<div className={styles.inner}>
+					<Link href={localeHref(locale, "/")} className={styles.logo} aria-label="REC-A">
 						{logoId ? (
 							/* eslint-disable-next-line @next/next/no-img-element */
-							<img src={assetUrl(logoId, { height: 70 })} alt="REC-A" width={130} height={70} />
+							<img src={assetUrl(logoId)} alt="REC-A" />
 						) : (
-							<span className="font-bold text-xl">REC-A</span>
+							<span className={styles.logoText}>REC-A</span>
 						)}
 					</Link>
-				</div>
-				<div className="flex flex-row items-center gap-10">
-					<ul className="nav-links-container hidden md:flex">
-						{nav.map((item) => (
-							<li
-								key={item.title}
-								className="nav-links px-4 cursor-pointer text-center capitalize font-medium text-gray-500 hover:scale-105 hover:text-gray duration-200 link-underline"
-							>
-								<Link href={hrefFor(locale, item)}>{item.title}</Link>
-							</li>
-						))}
-					</ul>
-					<div className="hidden md:flex items-center gap-6">
+
+					<div className={styles.right}>
+						<Link href={localeHref(locale, "/")} className={styles.iconBtn} aria-label={labels.home} title={labels.home}>
+							<House size={21} />
+						</Link>
 						<LanguageSwitcher current={locale} />
-						<SocialLinks color="black" />
+						<button
+							type="button"
+							className={styles.iconBtn}
+							aria-label={labels.menu}
+							aria-expanded={open}
+							onClick={() => setOpen(true)}
+						>
+							<Menu size={22} />
+						</button>
 					</div>
 				</div>
-				<div onClick={() => setOpen(!open)} className="cursor-pointer z-10 text-gray-500 md:hidden">
-					{open ? <FaTimes size={30} /> : <FaBars size={30} />}
-				</div>
-			</div>
+			</header>
+
 			{open && (
-				<ul className="flex flex-col justify-center items-center absolute top-0 left-0 w-full h-screen bg-white text-gray-500">
-					{nav.map((item) => (
-						<li key={item.title} className="px-4 cursor-pointer text-center capitalize py-6 text-4xl">
-							<Link onClick={() => setOpen(false)} href={hrefFor(locale, item)}>
-								{item.title}
-							</Link>
-						</li>
-					))}
-					<li className="py-6">
-						<LanguageSwitcher current={locale} />
-					</li>
-				</ul>
+				<>
+					<div className={styles.scrim} onClick={() => setOpen(false)} />
+					<nav className={styles.drawer} aria-label={labels.menu}>
+						<div className={styles.drawerHead}>
+							<span className={styles.drawerTitle}>{labels.menu}</span>
+							<button type="button" className={styles.iconBtn} aria-label={labels.close} onClick={() => setOpen(false)}>
+								<X size={22} />
+							</button>
+						</div>
+						<ul className={styles.drawerNav}>
+							{nav.map((item, i) => (
+								<li key={item.title}>
+									<Link href={hrefFor(locale, item)} onClick={() => setOpen(false)}>
+										<span className={styles.drawerIndex}>{String(i + 1).padStart(2, "0")}</span>
+										{item.title}
+									</Link>
+								</li>
+							))}
+						</ul>
+						<div className={styles.drawerFoot}>
+							<span className={styles.drawerTitle}>{labels.contact}</span>
+							{phone && (
+								<a className={styles.drawerPhone} href={`tel:${phone.replace(/\s/g, "")}`}>
+									{phone}
+								</a>
+							)}
+							<SocialLinks color="dark" links={socialLinks} />
+						</div>
+					</nav>
+				</>
 			)}
-		</div>
+		</>
 	);
 }

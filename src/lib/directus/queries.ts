@@ -59,6 +59,7 @@ query Page($permalink: String!, $lang: String!) {
           items(sort: ["sort"]) { icon translations${TR_FILTER} { languages_code { code } title text } }
         }
         ... on block_contact { show_map form { id } translations${TR_FILTER} { languages_code { code } heading } }
+        ... on block_cta { form { id } translations${TR_FILTER} { languages_code { code } eyebrow heading subheading button_label } }
       }
     }
   }
@@ -141,6 +142,12 @@ function mapBlocks(raw: RawPage["blocks"], locale: Locale): BlockData[] {
 			case "block_contact":
 				out.push({ collection: "block_contact", data: {
 					heading: t.heading, show_map: it.show_map ?? true, formId: it.form?.id ?? null,
+				} });
+				break;
+			case "block_cta":
+				out.push({ collection: "block_cta", data: {
+					eyebrow: t.eyebrow, heading: t.heading, subheading: t.subheading,
+					button_label: t.button_label, formId: it.form?.id ?? null,
 				} });
 				break;
 		}
@@ -260,7 +267,7 @@ export const getForm = cache(async (id: string, locale: Locale): Promise<FormDat
 	const q = `query($id: ID!, $lang: String!) {
 		forms_by_id(id: $id) {
 			id target_collection
-			translations${TR_FILTER} { languages_code { code } submit_label success_message }
+			translations${TR_FILTER} { languages_code { code } title submit_label success_message }
 			fields(sort: ["sort"]) {
 				name type required width
 				translations${TR_FILTER} { languages_code { code } label placeholder help_text choices }
@@ -273,6 +280,7 @@ export const getForm = cache(async (id: string, locale: Locale): Promise<FormDat
 	return {
 		id: forms_by_id.id,
 		target_collection: forms_by_id.target_collection,
+		title: t.title,
 		submit_label: t.submit_label,
 		success_message: t.success_message,
 		fields: (forms_by_id.fields ?? []).map((f: any) => {

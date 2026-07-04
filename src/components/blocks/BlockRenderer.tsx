@@ -8,6 +8,7 @@ import RichText from "./RichText/RichText";
 import FounderProfile from "./FounderProfile/FounderProfile";
 import FeatureList from "./FeatureList/FeatureList";
 import Contact from "./Contact/Contact";
+import Cta from "./Cta/Cta";
 
 /**
  * Renders a page's blocks in order. Adding a block type = a new case here + a
@@ -34,6 +35,8 @@ export default function BlockRenderer({ blocks, locale }: { blocks: BlockData[];
 						return <FeatureList key={i} data={block.data} />;
 					case "block_contact":
 						return <Contact key={i} data={block.data} locale={locale} />;
+					case "block_cta":
+						return <Cta key={i} data={block.data} locale={locale} />;
 					default:
 						return null;
 				}

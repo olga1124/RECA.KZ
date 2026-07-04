@@ -1,42 +1,73 @@
 .section {
-	background-color: #f8f8f8;
+	background: var(--surface);
+	padding-block: var(--section-y);
 }
 
 .container {
-	max-width: 1400px;
-	margin: 0 auto;
-	padding: 30px 20px;
+	max-width: var(--container-max);
+	margin-inline: auto;
+	padding-inline: var(--container-px);
 }
 
 .heading {
-	padding: 0 0 50px;
+	margin-bottom: clamp(28px, 4vw, 56px);
+	max-width: 20ch;
 }
 
 .content {
 	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-	gap: 40px 60px;
+	grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
+	gap: clamp(16px, 2vw, 24px);
+	counter-reset: stage;
 }
 
 .card {
+	position: relative;
 	display: flex;
-	flex-direction: row;
-	gap: 20px;
-	flex-flow: wrap;
+	flex-direction: column;
+	gap: 16px;
+	background: var(--bg);
+	border: 1px solid var(--line);
+	border-radius: var(--r-lg);
+	padding: clamp(24px, 2.6vw, 32px);
+	counter-increment: stage;
+	transition: border-color var(--dur) var(--ease), transform var(--dur) var(--ease);
+}
+
+.card::before {
+	content: counter(stage, decimal-leading-zero);
+	font-size: var(--fs-sm);
+	font-weight: var(--fw-bold);
+	color: var(--brand);
+	letter-spacing: var(--ls-caps);
+}
+
+.card:hover {
+	border-color: var(--brand);
+	transform: translateY(-4px);
 }
 
 .icon {
-	flex-grow: 0.1;
-	height: max-content;
-	display: flex;
-	justify-content: center;
-	align-items: center;
+	display: grid;
+	place-content: center;
+	width: 44px;
+	height: 44px;
+	border-radius: var(--r-sm);
+	background: var(--brand-050);
 }
 
 .text {
-	flex: 1;
 	display: flex;
 	flex-direction: column;
-	gap: 12px;
-	width: 100%;
+	gap: 8px;
+}
+
+.text h3 {
+	font-size: var(--fs-md);
+}
+
+.text p {
+	font-size: var(--fs-base);
+	line-height: var(--lh-normal);
+	color: var(--ink-2);
 }

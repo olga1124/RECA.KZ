@@ -29,6 +29,7 @@ async function main() {
 		.filter((c) => !c.startsWith("directus_"))
 		.filter((c) => !["leads", "applicants"].includes(c));
 	contentReadable.push("directus_files");
+	contentReadable.push("directus_folders"); // resolve the "CV" upload folder by name
 
 	// 1. Policy
 	let policy = await findByName("/policies", POLICY_NAME);

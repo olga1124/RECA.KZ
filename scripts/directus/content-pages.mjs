@@ -20,7 +20,7 @@ const home = {
 	},
 	blocks: [
 		{
-			type: "block_hero", form: "contact",
+			type: "block_hero", form: "hire",
 			tr: {
 				ru: { title: "HR-агентство", suptitle: "Профессиональный рекрутинг полного цикла", descr: "Поиск и подбор специалистов middle & top уровней", button_label: "Узнать стоимость услуг" },
 				kz: { title: "HR-агенттік", suptitle: "Толық циклді кәсіби рекрутинг", descr: "Middle & top деңгейдегі мамандарды іздеу және таңдау", button_label: "Қызмет құнын білу" },
@@ -118,8 +118,12 @@ const home = {
 			tr: { ru: { heading: "Отзывы и рекомендации" }, kz: { heading: "Пікірлер мен ұсыныстар" }, en: { heading: "Reviews & recommendations" } },
 		},
 		{
-			type: "block_contact", form: "contact", show_map: true,
-			tr: { ru: { heading: "Свяжитесь с нами" }, kz: { heading: "Бізбен байланысыңыз" }, en: { heading: "Get in touch" } },
+			type: "block_cta", form: "hire",
+			tr: {
+				ru: { heading: "Готовы усилить свою команду?", subheading: "Оставьте заявку — мы обсудим вашу задачу и предложим оптимальное решение.", button_label: "Оставить заявку" },
+				kz: { heading: "Командаңызды күшейтуге дайынсыз ба?", subheading: "Өтінім қалдырыңыз — міндетіңізді талқылап, оңтайлы шешім ұсынамыз.", button_label: "Өтінім қалдыру" },
+				en: { heading: "Ready to strengthen your team?", subheading: "Leave a request and we will discuss your needs and offer the best solution.", button_label: "Leave a request" },
+			},
 		},
 	],
 };
@@ -136,7 +140,7 @@ const employers = {
 	},
 	blocks: [
 		{
-			type: "block_hero", form: "contact",
+			type: "block_hero", form: "hire",
 			tr: {
 				ru: { title: "Подбор персонала по системе Classic Recruit", suptitle: "Выбери себе только лучших из лучших", button_label: "Узнать стоимость услуг" },
 				kz: { title: "Classic Recruit жүйесі бойынша персонал таңдау", suptitle: "Ең үздіктердің ішінен ең үздігін таңда", button_label: "Қызмет құнын білу" },
@@ -178,8 +182,12 @@ const employers = {
 			],
 		},
 		{
-			type: "block_contact", form: "contact", show_map: true,
-			tr: { ru: { heading: "Свяжитесь с нами" }, kz: { heading: "Бізбен байланысыңыз" }, en: { heading: "Get in touch" } },
+			type: "block_cta", form: "hire",
+			tr: {
+				ru: { heading: "Нужен сильный специалист на ключевую позицию?", subheading: "Оставьте заявку — обсудим вакансию и представим кандидатов в течение 7–18 рабочих дней.", button_label: "Заказать подбор" },
+				kz: { heading: "Негізгі лауазымға мықты маман керек пе?", subheading: "Өтінім қалдырыңыз — вакансияны талқылап, 7–18 жұмыс күні ішінде кандидаттарды ұсынамыз.", button_label: "Іріктеуге тапсырыс беру" },
+				en: { heading: "Need a strong specialist for a key position?", subheading: "Leave a request and we will discuss the vacancy and present candidates within 7-18 business days.", button_label: "Start the search" },
+			},
 		},
 	],
 };
@@ -196,7 +204,7 @@ const job = {
 	},
 	blocks: [
 		{
-			type: "block_hero", form: "contact",
+			type: "block_hero", form: "subscription",
 			tr: {
 				ru: { title: "Подбор персонала по системе Recruit Flow", suptitle: "Выбери работу, достойную тебя", button_label: "Узнать стоимость услуг" },
 				kz: { title: "Recruit Flow жүйесі бойынша персонал таңдау", suptitle: "Өзіңе лайық жұмысты таңда", button_label: "Қызмет құнын білу" },
@@ -234,10 +242,40 @@ const job = {
 			],
 		},
 		{
-			type: "block_contact", form: "contact", show_map: true,
-			tr: { ru: { heading: "Свяжитесь с нами" }, kz: { heading: "Бізбен байланысыңыз" }, en: { heading: "Get in touch" } },
+			type: "block_cta", form: "subscription",
+			tr: {
+				ru: { heading: "Нужен стабильный поток кандидатов?", subheading: "Оставьте заявку — подберём тариф Recruit Flow под кадровые задачи вашего бизнеса.", button_label: "Узнать условия" },
+				kz: { heading: "Кандидаттардың тұрақты ағыны қажет пе?", subheading: "Өтінім қалдырыңыз — бизнесіңіздің кадрлық міндеттеріне сай Recruit Flow тарифін таңдаймыз.", button_label: "Шарттарын білу" },
+				en: { heading: "Need a steady flow of candidates?", subheading: "Leave a request and we will tailor a Recruit Flow plan to your hiring needs.", button_label: "Get the details" },
+			},
 		},
 	],
 };
 
-export const pages = [home, employers, job];
+// ── CONTACT ─────────────────────────────────────────────────────────────────
+
+const contact = {
+	permalink: t("/contact", "/contact", "/contact"),
+	adminTitle: t("Контакты", "Байланыс", "Contacts"),
+	seo: {
+		ru: { title: "Контакты | REC-A", meta_description: "Свяжитесь с REC-A: телефон, email, форма заявки. Работаем с компаниями по всему Казахстану." },
+		kz: { title: "Байланыс | REC-A", meta_description: "REC-A-мен байланысыңыз: телефон, email, өтінім формасы. Бүкіл Қазақстан бойынша компаниялармен жұмыс істейміз." },
+		en: { title: "Contacts | REC-A", meta_description: "Get in touch with REC-A: phone, email, request form. We work with companies across Kazakhstan." },
+	},
+	blocks: [
+		{
+			type: "block_contact", form: "contact", show_map: true,
+			tr: { ru: { heading: "Свяжитесь с нами" }, kz: { heading: "Бізбен байланысыңыз" }, en: { heading: "Get in touch" } },
+		},
+		{
+			type: "block_cta", form: "cv",
+			tr: {
+				ru: { heading: "Ищете работу?", subheading: "Отправьте резюме — мы добавим вас в базу кандидатов REC-A и свяжемся, когда появится подходящая вакансия.", button_label: "Отправить резюме" },
+				kz: { heading: "Жұмыс іздеп жүрсіз бе?", subheading: "Түйіндеме жіберіңіз — сізді REC-A кандидаттар базасына қосамыз және қолайлы вакансия пайда болғанда байланысамыз.", button_label: "Түйіндеме жіберу" },
+				en: { heading: "Looking for a job?", subheading: "Send your CV and we will add you to the REC-A candidate base and reach out when a suitable vacancy appears.", button_label: "Send CV" },
+			},
+		},
+	],
+};
+
+export const pages = [home, employers, job, contact];

@@ -33,7 +33,7 @@ const SORT_FIELD = { type: "integer", meta: { interface: "input", hidden: true }
 
 const BLOCK_COLLECTIONS = [
 	"block_hero", "block_cards", "block_stages", "block_reviews",
-	"block_richtext", "block_founder_profile", "block_feature_list", "block_contact",
+	"block_richtext", "block_founder_profile", "block_feature_list", "block_contact", "block_cta",
 ];
 
 // ── Base collections ──────────────────────────────────────────────────────
@@ -71,7 +71,7 @@ async function forms() {
 		{ meta: { note: "Where submissions are stored" } },
 	));
 	await ensureTranslations("forms", [
-		{ field: "title", ...str({ meta: { note: "Internal name" } }) },
+		{ field: "title", ...str({ meta: { note: "Form heading — shown to visitors above the fields" } }) },
 		{ field: "submit_label", ...str() },
 		{ field: "success_message", ...text() },
 	]);
@@ -184,6 +184,14 @@ async function blocks() {
 	await m2oField("block_contact", "form", "forms");
 	await ensureField("block_contact", "show_map", bool({ default: true }));
 	await ensureTranslations("block_contact", [{ field: "heading", ...str() }]);
+
+	log("block_cta");
+	await ensureCollection("block_cta", { meta: { icon: "ads_click", note: "CTA banner block (button opens a form modal)" }, schema: {} });
+	await m2oField("block_cta", "form", "forms", { meta: { note: "Form opened by the CTA button" } });
+	await ensureTranslations("block_cta", [
+		{ field: "eyebrow", ...str() }, { field: "heading", ...str() },
+		{ field: "subheading", ...text() }, { field: "button_label", ...str() },
+	]);
 }
 
 // ── Pages (base + relations) ───────────────────────────────────────────────
@@ -220,14 +228,29 @@ async function leads() {
 	await ensureField("leads", "email", str());
 	await ensureField("leads", "phone", str());
 	await ensureField("leads", "subject", str());
+	await ensureField("leads", "company", str());
+	await ensureField("leads", "position", str({ meta: { note: "Role the client wants to fill" } }));
 	await ensureField("leads", "selections", json({ meta: { note: "Selected services" } }));
+	await ensureField("leads", "details", json({ meta: { note: "Answers to form fields without a dedicated column" } }));
 	await m2oField("leads", "source_page", "pages");
 	await m2oField("leads", "source_language", "languages", { type: "string" });
 	await ensureField("leads", "date_created", dateCreated());
 }
 
+/** Ensure a directus_files folder exists (uploads are routed into it by name). */
+async function ensureFolder(name) {
+	const found = await api("GET", `/folders?filter[name][_eq]=${encodeURIComponent(name)}&limit=1`);
+	if (Array.isArray(found) && found.length) {
+		console.log(`  = folder ${name} (exists)`);
+		return;
+	}
+	await api("POST", "/folders", { name });
+	console.log(`  + folder ${name}`);
+}
+
 async function applicants() {
 	log("applicants");
+	await ensureFolder("CV"); // uploaded resumes land here (see /api/forms/submit)
 	await ensureCollection("applicants", { meta: { icon: "person_add", note: "CV applications" }, schema: {} });
 	await ensureField("applicants", "status", dropdown(
 		[{ text: "New", value: "new" }, { text: "Reviewed", value: "reviewed" }, { text: "Contacted", value: "contacted" }],
@@ -236,7 +259,9 @@ async function applicants() {
 	await ensureField("applicants", "name", str());
 	await ensureField("applicants", "email", str());
 	await ensureField("applicants", "phone", str());
+	await ensureField("applicants", "position", str({ meta: { note: "Desired position" } }));
 	await fileField("applicants", "file");
+	await ensureField("applicants", "details", json({ meta: { note: "Answers to form fields without a dedicated column" } }));
 	await m2oField("applicants", "source_page", "pages");
 	await m2oField("applicants", "source_language", "languages", { type: "string" });
 	await ensureField("applicants", "date_created", dateCreated());
@@ -332,6 +357,7 @@ async function main() {
 	await uiStrings();
 
 	console.log("\n✓ Schema provisioned.");
+	console.log("Now re-run role.mjs — the Website Service role only sees collections that existed when it was last provisioned.");
 }
 
 main().catch((err) => {

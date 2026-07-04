@@ -4,7 +4,7 @@ import "swiper/css/pagination";
 import { useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination } from "swiper/modules";
-import { FaStar } from "react-icons/fa";
+import { Star } from "lucide-react";
 import type { Review } from "@/lib/directus/types";
 import styles from "./ReviewsCarousel.module.css";
 
@@ -12,7 +12,7 @@ function Stars({ n }: { n: number }) {
 	return (
 		<div className={styles.stars}>
 			{Array.from({ length: n }).map((_, i) => (
-				<FaStar key={i} size={20} color="#FFD700" />
+				<Star key={i} size={18} className={styles.star} />
 			))}
 		</div>
 	);

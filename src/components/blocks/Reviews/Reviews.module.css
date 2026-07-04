@@ -1,14 +1,13 @@
 .section {
+	padding-block: var(--section-y);
 }
 
 .container {
-	max-width: 1400px;
-	margin: 0 auto;
-	padding: 30px 20px;
+	max-width: var(--container-max);
+	margin-inline: auto;
+	padding-inline: var(--container-px);
 }
 
 .title {
-	font-size: 32px;
-	font-weight: 600;
-	margin-bottom: 20px;
+	margin-bottom: clamp(24px, 3vw, 40px);
 }

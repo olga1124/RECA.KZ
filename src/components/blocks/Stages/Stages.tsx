@@ -12,7 +12,7 @@ export default function Stages({ data }: { data: StagesBlock }) {
 					{data.items.map((item, i) => (
 						<div key={i} className={styles.card}>
 							<div className={styles.icon}>
-								<Image src={stageIcon(item.icon)} width={40} height={40} alt="" />
+								<Image src={stageIcon(item.icon)} width={24} height={24} alt="" />
 							</div>
 							<div className={styles.text}>
 								<h3>{item.title}</h3>

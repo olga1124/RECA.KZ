@@ -9,6 +9,30 @@ import { isLocale } from "@/lib/i18n/config";
  * A Directus Flow on items.create sends the email notification.
  */
 
+// Real columns per target collection (kept in sync with scripts/directus/schema.mjs).
+// Form fields outside these sets are stored in the `details` JSON column.
+const COLUMNS: Record<"leads" | "applicants", Set<string>> = {
+	leads: new Set(["name", "email", "phone", "subject", "company", "position", "selections"]),
+	applicants: new Set(["name", "email", "phone", "position", "file"]),
+};
+
+// Uploaded CVs are filed into this directus_files folder (created by schema.mjs)
+// instead of the library root. Resolved by name once per server instance.
+const UPLOAD_FOLDER = "CV";
+let uploadFolderId: string | null | undefined;
+
+async function getUploadFolder(): Promise<string | null> {
+	if (uploadFolderId !== undefined) return uploadFolderId;
+	try {
+		const res = await directus(`/folders?filter[name][_eq]=${encodeURIComponent(UPLOAD_FOLDER)}&limit=1`, { method: "GET" });
+		const json = res.ok ? await res.json() : null;
+		uploadFolderId = json?.data?.[0]?.id ?? null;
+	} catch {
+		uploadFolderId = null;
+	}
+	return uploadFolderId ?? null;
+}
+
 async function directus(path: string, init: RequestInit) {
 	return fetch(`${DIRECTUS_URL}${path}`, {
 		...init,
@@ -41,11 +65,17 @@ export async function POST(req: NextRequest) {
 
 		const allowed = new Map(form.fields.map((f) => [f.name, f.type]));
 		const record: Record<string, unknown> = {};
+		const details: Record<string, unknown> = {};
 
-		// Scalar / array fields (only those declared on the form)
+		// Scalar / array fields (only those declared on the form). Fields that
+		// match a real column are stored directly; the rest go into `details`,
+		// so editors can add arbitrary fields to a form without schema changes.
 		for (const [k, v] of Object.entries(payload)) {
-			if (allowed.has(k) && allowed.get(k) !== "file") record[k] = v;
+			if (!allowed.has(k) || allowed.get(k) === "file") continue;
+			if (COLUMNS[form.target_collection].has(k)) record[k] = v;
+			else details[k] = v;
 		}
+		if (Object.keys(details).length > 0) record.details = details;
 
 		// File fields → upload, store the file id
 		for (const [name, type] of allowed) {
@@ -53,6 +83,8 @@ export async function POST(req: NextRequest) {
 			const file = fd.get(`file_${name}`);
 			if (file instanceof File && file.size > 0) {
 				const up = new FormData();
+				const folder = await getUploadFolder();
+				if (folder) up.append("folder", folder); // non-file fields must precede the file part
 				up.append("file", file, file.name);
 				const res = await directus("/files", { method: "POST", body: up });
 				if (!res.ok) return NextResponse.json({ error: "upload failed" }, { status: 502 });

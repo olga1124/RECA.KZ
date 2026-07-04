@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import localFont from "next/font/local";
+import { Manrope } from "next/font/google";
 import { locales, isLocale, type Locale } from "@/lib/i18n/config";
 import { getSiteSettings, getNavbar, getFooter, getUiStrings } from "@/lib/directus/queries";
 import Navbar from "@/components/layout/Navbar";
@@ -7,15 +7,13 @@ import Footer from "@/components/layout/Footer";
 import CallbackBtn from "@/components/Buttons/CallbackBtn";
 import ModalProvider from "@/components/modal/ModalProvider";
 import { OrganizationJsonLd } from "@/lib/seo/jsonld";
+import styles from "./layout.module.css";
 
-const pnt = localFont({
-	src: [
-		{ path: "../../assets/fonts/pnt/Panton-Bold.woff2", weight: "700", style: "normal" },
-		{ path: "../../assets/fonts/pnt/Panton-SemiBold.woff2", weight: "600", style: "normal" },
-		{ path: "../../assets/fonts/pnt/Panton-Regular.woff2", weight: "400", style: "normal" },
-		{ path: "../../assets/fonts/pnt/Panton-Light.woff2", weight: "300", style: "normal" },
-	],
-	variable: "--font-pnt",
+const sans = Manrope({
+	subsets: ["latin", "cyrillic"],
+	weight: ["400", "500", "600", "700", "800"],
+	variable: "--font-sans",
+	display: "swap",
 });
 
 export function generateStaticParams() {
@@ -41,14 +39,28 @@ export default async function LocaleLayout({
 
 	return (
 		<html lang={locale}>
-			<body className={pnt.variable}>
+			<body className={sans.variable}>
 				<OrganizationJsonLd settings={settings} />
 				<ModalProvider>
-					<Navbar locale={locale as Locale} nav={nav} logoId={settings.logoId} />
-					<main id="main" className="container">
-						{children}
-					</main>
-					<Footer locale={locale as Locale} sections={footerSections} settings={settings} t={t} />
+					<div className={styles.shell}>
+						<Navbar
+							locale={locale as Locale}
+							nav={nav}
+							logoId={settings.logoId}
+							phone={settings.phone}
+							socialLinks={settings.social_links}
+							labels={{
+								home: t("nav.home", "Главная"),
+								menu: t("nav.menu", "Меню"),
+								close: t("common.close", "Закрыть"),
+								contact: t("nav.contact", "Контакты"),
+							}}
+						/>
+						<main id="main" className={styles.main}>
+							{children}
+						</main>
+						<Footer locale={locale as Locale} sections={footerSections} settings={settings} t={t} />
+					</div>
 					<CallbackBtn phone={settings.phone} />
 				</ModalProvider>
 			</body>

@@ -12,7 +12,8 @@ export type BlockType =
 	| "block_richtext"
 	| "block_founder_profile"
 	| "block_feature_list"
-	| "block_contact";
+	| "block_contact"
+	| "block_cta";
 
 export interface HeroBlock {
 	title: string;
@@ -86,6 +87,14 @@ export interface ContactBlock {
 	formId?: string | null;
 }
 
+export interface CtaBlock {
+	eyebrow?: string;
+	heading?: string;
+	subheading?: string;
+	button_label?: string;
+	formId?: string | null;
+}
+
 export type BlockData =
 	| { collection: "block_hero"; data: HeroBlock }
 	| { collection: "block_cards"; data: CardsBlock }
@@ -94,7 +103,8 @@ export type BlockData =
 	| { collection: "block_richtext"; data: RichTextBlock }
 	| { collection: "block_founder_profile"; data: FounderProfileBlock }
 	| { collection: "block_feature_list"; data: FeatureListBlock }
-	| { collection: "block_contact"; data: ContactBlock };
+	| { collection: "block_contact"; data: ContactBlock }
+	| { collection: "block_cta"; data: CtaBlock };
 
 export interface PageSeo {
 	title?: string;
@@ -160,6 +170,7 @@ export interface FormField {
 export interface FormData {
 	id: string;
 	target_collection: "leads" | "applicants";
+	title?: string;
 	submit_label?: string;
 	success_message?: string;
 	fields: FormField[];

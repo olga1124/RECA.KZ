@@ -1,65 +1,83 @@
 .section {
-	padding-top: 90px;
+	padding-block: clamp(40px, 6vw, 88px) var(--section-y);
 }
 
 .container {
-	max-width: 1400px;
-	margin: 0 auto;
-	padding: 30px 20px;
+	max-width: var(--container-max);
+	margin-inline: auto;
+	padding-inline: var(--container-px);
 }
 
 .content {
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	gap: 30px;
-	color: #000;
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr));
+	gap: clamp(32px, 5vw, 72px);
+	align-items: end;
 }
 
 .title {
 	display: flex;
-	flex: 1;
 	flex-direction: column;
-	gap: 10px;
-}
-
-.title h1 {
-	font-size: clamp(32px, 6vw, 60px);
-	line-height: 130%;
-	color: #000;
+	align-items: flex-start;
+	gap: clamp(16px, 2.4vw, 24px);
 }
 
 .suptitle {
-	font-size: clamp(24px, 4vw, 32px);
-	font-weight: lighter;
-	line-height: 150%;
+	font-size: var(--fs-md);
+	font-weight: var(--fw-semibold);
+	color: var(--brand);
+	letter-spacing: var(--ls-snug);
+	order: -1;
+}
+
+.title h1 {
+	font-size: var(--fs-3xl);
+	line-height: var(--lh-tight);
+	letter-spacing: var(--ls-tighter);
 }
 
 .descr {
-	font-size: clamp(18px, 4vw, 24px);
-	line-height: 150%;
+	font-size: var(--fs-md);
+	line-height: var(--lh-normal);
+	color: var(--ink-2);
+	max-width: 46ch;
 }
 
 .cta {
-	font-size: 20px;
-	color: #fff;
-	background-color: #cf7b18;
-	width: 320px;
-	height: 60px;
-	border-radius: 60px;
-	margin-top: 20px;
-	transition: background-color 0.2s ease;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	font-size: var(--fs-md);
+	font-weight: var(--fw-semibold);
+	color: var(--on-dark);
+	background: var(--accent);
+	padding: 17px 40px;
+	border-radius: var(--r-sm);
+	margin-top: 8px;
+	cursor: pointer;
+	transition: background var(--dur) var(--ease), transform var(--dur) var(--ease);
 }
 
 .cta:hover {
-	background-color: rgba(0, 0, 0, 0.7);
+	background: var(--accent-600);
+	transform: translateY(-2px);
+}
+
+@media (max-width: 520px) {
+	.cta {
+		width: 100%;
+	}
 }
 
 .description {
-	flex: 1;
+	padding: clamp(24px, 3vw, 36px);
+	border: 1px solid var(--line);
+	border-radius: var(--r-lg);
+	background: var(--surface);
 }
 
 .description p {
-	line-height: 30px;
-	text-align: justify;
+	font-size: var(--fs-base);
+	line-height: var(--lh-relaxed);
+	color: var(--ink-2);
 }

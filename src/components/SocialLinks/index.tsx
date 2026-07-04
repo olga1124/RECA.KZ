@@ -3,6 +3,7 @@ import Instagram from "@/assets/icons/instagram.svg";
 import Whatsapp from "@/assets/icons/whatsapp.svg";
 import Phone from "@/assets/icons/phone.svg";
 import type { SocialLink } from "@/lib/directus/types";
+import styles from "./SocialLinks.module.css";
 
 const ICONS: Record<string, any> = { instagram: Instagram, whatsapp: Whatsapp, phone: Phone };
 
@@ -35,10 +36,10 @@ export default function SocialLinks({
 	}
 
 	return (
-		<div className="social-links">
+		<div className={styles.links}>
 			{items.map((it, i) => (
-				<a key={i} href={it.url} target="_blank" rel="noreferrer">
-					<Image src={it.icon} width={30} height={30} alt={it.alt} style={{ filter: `invert(${invert}%)` }} />
+				<a key={i} href={it.url} target="_blank" rel="noreferrer" className={styles.link} aria-label={it.alt}>
+					<Image src={it.icon} width={18} height={18} alt={it.alt} style={{ filter: `invert(${invert}%)` }} />
 				</a>
 			))}
 		</div>
