@@ -1,17 +1,39 @@
 # Caddy reverse proxy for the reca.kz stack.
 #
-# NOTE: `reca.kz` is intentionally NOT configured here yet — its DNS still
-# points to Vercel, so an ACME (Let's Encrypt) challenge for it would fail.
-# Add the `reca.kz { reverse_proxy reca-app:3000 }` block only during cutover,
-# once DNS for reca.kz points at this server and the reca-app container is up.
+# Canonical host is the apex reca.kz (matches NEXT_PUBLIC_SITE_URL and the
+# canonical/hreflang tags). www redirects to it with a 301.
+#
+# Deploy this only AFTER the apex `reca.kz` A record points at this server —
+# otherwise Let's Encrypt cannot validate reca.kz and will log cert errors.
 
 {
-	# Email used by Let's Encrypt for expiry notices.
 	email admin@reca.kz
 }
 
+# ── Canonical site ─────────────────────────────────────────────────────────
+reca.kz {
+	encode gzip zstd
+	header {
+		# HTTPS-only for a year (certs are auto-managed by Caddy).
+		Strict-Transport-Security "max-age=31536000"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+	}
+
+	# Defense-in-depth: hide sensitive dotfiles/paths (return 404, don't reveal).
+	# Targeted patterns only — NOT all dotfiles, so /.well-known (ACME) still works.
+	@blocked path /.env* /.git* /.htaccess /.htpasswd /.svn*
+	respond @blocked 404
+
+	reverse_proxy reca-app:3000
+}
+
+# ── www → apex (301, one canonical host for SEO) ───────────────────────────
+www.reca.kz {
+	redir https://reca.kz{uri} permanent
+}
+
+# ── Directus (admin UI + file assets) ──────────────────────────────────────
 adm.reca.kz {
-	# `directus` is resolvable over the shared external `reca-network`
-	# (docker compose registers the service name as a network alias).
 	reverse_proxy directus:8055
 }
