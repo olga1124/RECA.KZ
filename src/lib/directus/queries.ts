@@ -3,8 +3,12 @@ import { cache } from "react";
 import { directusQuery } from "./client";
 import { defaultLocale, locales, type Locale } from "@/lib/i18n/config";
 import type {
-	PageData, BlockData, SiteSettings, NavItem, FooterSection, Review, FormData,
+	PageData, BlockData, SiteSettings, SocialLink, NavItem, FooterSection,
+	Review, FormData, FormField,
 } from "./types";
+
+/** A Directus translation row: the translated fields plus their language code. */
+type Tr<T> = T & { languages_code?: { code: string } };
 
 /** Pick the translation for `locale`, falling back to RU, then the first. */
 function pickTr<T extends { languages_code?: { code: string } | string }>(
@@ -66,16 +70,89 @@ query Page($permalink: String!, $lang: String!) {
   }
 }`;
 
+// ── Raw GraphQL shapes (before flattening translations) ─────────────────────
+type Ref = { id: string } | null;
+
+interface RawCard {
+	icon?: string | null;
+	form?: Ref;
+	link_page?: { seo_url: string } | null;
+	translations?: Tr<{ title?: string; text?: string; text_under?: string; button_label?: string }>[];
+}
+interface RawItemWithIcon {
+	icon?: string | null;
+	translations?: Tr<{ title?: string; text?: string }>[];
+}
+interface RawPrinciple {
+	translations?: Tr<{ title?: string; points?: string }>[];
+}
+
+interface RawHero {
+	__typename: "block_hero";
+	form?: Ref;
+	translations?: Tr<{ title?: string; suptitle?: string; descr?: string; secondary_text?: string; button_label?: string }>[];
+}
+interface RawCards {
+	__typename: "block_cards";
+	cards?: RawCard[];
+	translations?: Tr<{ heading?: string }>[];
+}
+interface RawStages {
+	__typename: "block_stages";
+	stage_items?: RawItemWithIcon[];
+	translations?: Tr<{ heading?: string }>[];
+}
+interface RawReviews {
+	__typename: "block_reviews";
+	limit?: number | null;
+	translations?: Tr<{ heading?: string }>[];
+}
+interface RawRichText {
+	__typename: "block_richtext";
+	translations?: Tr<{ heading?: string; content?: string }>[];
+}
+interface RawFounderProfile {
+	__typename: "block_founder_profile";
+	photo?: Ref;
+	principles?: RawPrinciple[];
+	translations?: Tr<{ eyebrow_title?: string; name?: string; intro_content?: string; principles_heading?: string }>[];
+}
+interface RawFeatureList {
+	__typename: "block_feature_list";
+	items?: RawItemWithIcon[];
+	translations?: Tr<{ heading?: string }>[];
+}
+interface RawContact {
+	__typename: "block_contact";
+	show_map?: boolean | null;
+	form?: Ref;
+	translations?: Tr<{ heading?: string }>[];
+}
+interface RawCta {
+	__typename: "block_cta";
+	form?: Ref;
+	translations?: Tr<{ eyebrow?: string; heading?: string; subheading?: string; button_label?: string }>[];
+}
+interface RawForm {
+	__typename: "block_form";
+	form?: Ref;
+	translations?: Tr<{ heading?: string; subheading?: string }>[];
+}
+
+type RawBlockItem =
+	| RawHero | RawCards | RawStages | RawReviews | RawRichText
+	| RawFounderProfile | RawFeatureList | RawContact | RawCta | RawForm;
+
 interface RawPage {
 	id: string;
 	seo_url: string;
 	title: string;
 	seo?: {
 		no_index?: boolean;
-		og_image?: { id: string } | null;
-		translations?: { title?: string; meta_description?: string; og_title?: string; og_description?: string }[];
+		og_image?: Ref;
+		translations?: Tr<{ title?: string; meta_description?: string; og_title?: string; og_description?: string }>[];
 	} | null;
-	blocks: { collection: string; item: any }[];
+	blocks: { collection: string; item: RawBlockItem | null }[];
 }
 
 function mapBlocks(raw: RawPage["blocks"], locale: Locale): BlockData[] {
@@ -83,79 +160,99 @@ function mapBlocks(raw: RawPage["blocks"], locale: Locale): BlockData[] {
 	for (const b of raw) {
 		const it = b.item;
 		if (!it) continue;
-		const t = pickTr(it.translations, locale) as any;
-		switch (b.collection) {
-			case "block_hero":
+		// Switch on __typename: the union narrows `it` to the matching shape.
+		switch (it.__typename) {
+			case "block_hero": {
+				const t = pickTr(it.translations, locale);
 				out.push({ collection: "block_hero", data: {
-					title: t.title, suptitle: t.suptitle, descr: t.descr,
+					title: t.title ?? "", suptitle: t.suptitle, descr: t.descr,
 					secondary_text: t.secondary_text, button_label: t.button_label,
 					formId: it.form?.id ?? null,
 				} });
 				break;
-			case "block_cards":
+			}
+			case "block_cards": {
+				const t = pickTr(it.translations, locale);
 				out.push({ collection: "block_cards", data: {
 					heading: t.heading,
-					cards: (it.cards ?? []).map((c: any) => {
-						const ct = pickTr(c.translations, locale) as any;
+					cards: (it.cards ?? []).map((c) => {
+						const ct = pickTr(c.translations, locale);
 						return {
-							icon: c.icon, formId: c.form?.id ?? null,
+							icon: c.icon ?? undefined, formId: c.form?.id ?? null,
 							linkPermalink: c.link_page?.seo_url ?? null,
-							title: ct.title, text: ct.text, text_under: ct.text_under, button_label: ct.button_label,
+							title: ct.title ?? "", text: ct.text, text_under: ct.text_under, button_label: ct.button_label,
 						};
 					}),
 				} });
 				break;
-			case "block_stages":
+			}
+			case "block_stages": {
+				const t = pickTr(it.translations, locale);
 				out.push({ collection: "block_stages", data: {
 					heading: t.heading,
-					items: (it.stage_items ?? []).map((s: any) => {
-						const st = pickTr(s.translations, locale) as any;
-						return { icon: s.icon, title: st.title, text: st.text };
+					items: (it.stage_items ?? []).map((s) => {
+						const st = pickTr(s.translations, locale);
+						return { icon: s.icon ?? undefined, title: st.title ?? "", text: st.text };
 					}),
 				} });
 				break;
-			case "block_reviews":
+			}
+			case "block_reviews": {
+				const t = pickTr(it.translations, locale);
 				out.push({ collection: "block_reviews", data: { heading: t.heading, limit: it.limit ?? 12 } });
 				break;
-			case "block_richtext":
+			}
+			case "block_richtext": {
+				const t = pickTr(it.translations, locale);
 				out.push({ collection: "block_richtext", data: { heading: t.heading, content: t.content ?? "" } });
 				break;
-			case "block_founder_profile":
+			}
+			case "block_founder_profile": {
+				const t = pickTr(it.translations, locale);
 				out.push({ collection: "block_founder_profile", data: {
 					photoId: it.photo?.id ?? null,
 					eyebrow_title: t.eyebrow_title, name: t.name,
 					intro_content: t.intro_content, principles_heading: t.principles_heading,
-					principles: (it.principles ?? []).map((p: any) => {
-						const pt = pickTr(p.translations, locale) as any;
-						return { title: pt.title, points: pt.points };
+					principles: (it.principles ?? []).map((p) => {
+						const pt = pickTr(p.translations, locale);
+						return { title: pt.title ?? "", points: pt.points };
 					}),
 				} });
 				break;
-			case "block_feature_list":
+			}
+			case "block_feature_list": {
+				const t = pickTr(it.translations, locale);
 				out.push({ collection: "block_feature_list", data: {
 					heading: t.heading,
-					items: (it.items ?? []).map((f: any) => {
-						const ft = pickTr(f.translations, locale) as any;
-						return { icon: f.icon, title: ft.title, text: ft.text };
+					items: (it.items ?? []).map((f) => {
+						const ft = pickTr(f.translations, locale);
+						return { icon: f.icon ?? undefined, title: ft.title ?? "", text: ft.text };
 					}),
 				} });
 				break;
-			case "block_contact":
+			}
+			case "block_contact": {
+				const t = pickTr(it.translations, locale);
 				out.push({ collection: "block_contact", data: {
 					heading: t.heading, show_map: it.show_map ?? true, formId: it.form?.id ?? null,
 				} });
 				break;
-			case "block_cta":
+			}
+			case "block_cta": {
+				const t = pickTr(it.translations, locale);
 				out.push({ collection: "block_cta", data: {
 					eyebrow: t.eyebrow, heading: t.heading, subheading: t.subheading,
 					button_label: t.button_label, formId: it.form?.id ?? null,
 				} });
 				break;
-			case "block_form":
+			}
+			case "block_form": {
+				const t = pickTr(it.translations, locale);
 				out.push({ collection: "block_form", data: {
 					heading: t.heading, subheading: t.subheading, formId: it.form?.id ?? null,
 				} });
 				break;
+			}
 		}
 	}
 	return out;
@@ -165,17 +262,17 @@ export const getPage = cache(async (permalink: string, locale: Locale): Promise<
 	const { pages } = await directusQuery<{ pages: RawPage[] }>(PAGE_QUERY, { permalink, lang: locale });
 	const raw = pages?.[0];
 	if (!raw) return null;
-	const seoTr = pickTr(raw.seo?.translations as any, locale) as any;
+	const seoTr = pickTr(raw.seo?.translations, locale);
 	return {
 		id: raw.id,
 		permalink: raw.seo_url ?? permalink,
 		title: raw.title ?? "",
 		seo: raw.seo
 			? {
-					title: seoTr?.title,
-					meta_description: seoTr?.meta_description,
-					og_title: seoTr?.og_title,
-					og_description: seoTr?.og_description,
+					title: seoTr.title,
+					meta_description: seoTr.meta_description,
+					og_title: seoTr.og_title,
+					og_description: seoTr.og_description,
 					ogImageId: raw.seo.og_image?.id ?? null,
 					no_index: raw.seo.no_index,
 				}
@@ -196,6 +293,16 @@ export const getPageAlternates = cache(async (permalink: string): Promise<Record
 	return Object.fromEntries(locales.map((l) => [l, permalink]));
 });
 
+interface RawSiteSettings {
+	email?: string;
+	phone?: string;
+	address?: string;
+	social_links?: SocialLink[] | null;
+	logo?: Ref;
+	logo_dark?: Ref;
+	translations?: Tr<{ site_name?: string; footer_text?: string }>[];
+}
+
 export const getSiteSettings = cache(async (locale: Locale): Promise<SiteSettings> => {
 	const q = `query($lang: String!) {
 		site_settings {
@@ -204,9 +311,9 @@ export const getSiteSettings = cache(async (locale: Locale): Promise<SiteSetting
 			translations${TR_FILTER} { languages_code { code } site_name footer_text }
 		}
 	}`;
-	const { site_settings } = await directusQuery<{ site_settings: any }>(q, { lang: locale });
-	const s = site_settings ?? {};
-	const t = pickTr(s.translations, locale) as any;
+	const { site_settings } = await directusQuery<{ site_settings: RawSiteSettings | null }>(q, { lang: locale });
+	const s: RawSiteSettings = site_settings ?? {};
+	const t = pickTr(s.translations, locale);
 	return {
 		email: s.email, phone: s.phone, address: s.address,
 		social_links: s.social_links ?? [],
@@ -215,14 +322,23 @@ export const getSiteSettings = cache(async (locale: Locale): Promise<SiteSetting
 	};
 });
 
-function mapLink(n: any, locale: Locale, titleField: string): NavItem {
+interface RawLink {
+	link_type: NavItem["link_type"];
+	anchor?: string | null;
+	external_url?: string | null;
+	open_in_new_tab?: boolean | null;
+	page?: { seo_url: string } | null;
+	translations?: Tr<{ title?: string; label?: string }>[];
+}
+
+function mapLink(n: RawLink, locale: Locale, titleField: "title" | "label"): NavItem {
 	return {
-		title: (pickTr(n.translations, locale) as any)[titleField] ?? "",
+		title: pickTr(n.translations, locale)[titleField] ?? "",
 		link_type: n.link_type,
 		permalink: n.page?.seo_url ?? null,
 		anchor: n.anchor,
 		external_url: n.external_url,
-		open_in_new_tab: n.open_in_new_tab,
+		open_in_new_tab: n.open_in_new_tab ?? undefined,
 	};
 }
 
@@ -234,9 +350,14 @@ export const getNavbar = cache(async (locale: Locale): Promise<NavItem[]> => {
 			translations${TR_FILTER} { languages_code { code } title }
 		}
 	}`;
-	const { navbar_links } = await directusQuery<{ navbar_links: any[] }>(q, { lang: locale });
+	const { navbar_links } = await directusQuery<{ navbar_links: RawLink[] | null }>(q, { lang: locale });
 	return (navbar_links ?? []).map((n) => mapLink(n, locale, "title"));
 });
+
+interface RawFooterSection {
+	links?: RawLink[];
+	translations?: Tr<{ title?: string }>[];
+}
 
 export const getFooter = cache(async (locale: Locale): Promise<FooterSection[]> => {
 	const q = `query($lang: String!) {
@@ -249,10 +370,10 @@ export const getFooter = cache(async (locale: Locale): Promise<FooterSection[]> 
 			}
 		}
 	}`;
-	const { footer_sections } = await directusQuery<{ footer_sections: any[] }>(q, { lang: locale });
+	const { footer_sections } = await directusQuery<{ footer_sections: RawFooterSection[] | null }>(q, { lang: locale });
 	return (footer_sections ?? []).map((s) => ({
-		title: (pickTr(s.translations, locale) as any).title ?? "",
-		links: (s.links ?? []).map((l: any) => mapLink(l, locale, "label")),
+		title: pickTr(s.translations, locale).title ?? "",
+		links: (s.links ?? []).map((l) => mapLink(l, locale, "label")),
 	}));
 });
 
@@ -266,15 +387,25 @@ export const getReviews = cache(async (limit: number): Promise<Review[]> => {
 	return reviews ?? [];
 });
 
+interface RawUiString {
+	key: string;
+	translations?: Tr<{ value?: string }>[];
+}
+
 export const getUiStrings = cache(async (locale: Locale) => {
 	const q = `query($lang: String!) {
 		ui_strings(limit: -1) { key translations${TR_FILTER} { languages_code { code } value } }
 	}`;
-	const { ui_strings } = await directusQuery<{ ui_strings: any[] }>(q, { lang: locale });
+	const { ui_strings } = await directusQuery<{ ui_strings: RawUiString[] | null }>(q, { lang: locale });
 	const map = new Map<string, string>();
-	for (const s of ui_strings ?? []) map.set(s.key, (pickTr(s.translations, locale) as any).value ?? "");
+	for (const s of ui_strings ?? []) map.set(s.key, pickTr(s.translations, locale).value ?? "");
 	return (key: string, fallback = "") => map.get(key) || fallback;
 });
+
+interface RawChoiceItem {
+	id: string | number;
+	translations?: Tr<{ name?: string }>[];
+}
 
 /**
  * Options for select fields backed by a dictionary collection (see
@@ -288,12 +419,27 @@ const getCollectionChoices = cache(async (collection: string, locale: Locale) =>
 			id translations${TR_FILTER} { languages_code { code } name }
 		}
 	}`;
-	const data = await directusQuery<Record<string, any[]>>(q, { lang: locale });
+	const data = await directusQuery<Record<string, RawChoiceItem[]>>(q, { lang: locale });
 	return (data?.[collection] ?? []).map((item) => ({
 		value: String(item.id),
-		label: ((pickTr(item.translations, locale) as any).name as string) ?? "",
+		label: pickTr(item.translations, locale).name ?? "",
 	}));
 });
+
+interface RawFormField {
+	name: string;
+	type: string;
+	required?: boolean;
+	width?: FormField["width"];
+	choices_collection?: string | null;
+	translations?: Tr<{ label?: string; placeholder?: string; help_text?: string; choices?: { label: string; value: string }[] }>[];
+}
+interface RawFormDef {
+	id: string;
+	target_collection: FormData["target_collection"];
+	fields?: RawFormField[];
+	translations?: Tr<{ title?: string; submit_label?: string; success_message?: string }>[];
+}
 
 export const getForm = cache(async (id: string, locale: Locale): Promise<FormData | null> => {
 	const q = `query($id: ID!, $lang: String!) {
@@ -306,19 +452,19 @@ export const getForm = cache(async (id: string, locale: Locale): Promise<FormDat
 			}
 		}
 	}`;
-	const { forms_by_id } = await directusQuery<{ forms_by_id: any }>(q, { id, lang: locale });
+	const { forms_by_id } = await directusQuery<{ forms_by_id: RawFormDef | null }>(q, { id, lang: locale });
 	if (!forms_by_id) return null;
-	const t = pickTr(forms_by_id.translations, locale) as any;
+	const t = pickTr(forms_by_id.translations, locale);
 	return {
 		id: forms_by_id.id,
 		target_collection: forms_by_id.target_collection,
 		title: t.title,
 		submit_label: t.submit_label,
 		success_message: t.success_message,
-		fields: await Promise.all((forms_by_id.fields ?? []).map(async (f: any) => {
-			const ft = pickTr(f.translations, locale) as any;
+		fields: await Promise.all((forms_by_id.fields ?? []).map(async (f) => {
+			const ft = pickTr(f.translations, locale);
 			return {
-				name: f.name, type: f.type, required: f.required, width: f.width,
+				name: f.name, type: f.type, required: f.required ?? false, width: f.width ?? "full",
 				label: ft.label, placeholder: ft.placeholder, help_text: ft.help_text,
 				choices: f.choices_collection
 					? await getCollectionChoices(f.choices_collection, locale)
