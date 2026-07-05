@@ -1,11 +1,11 @@
-import Image from "next/image";
+import Image, { type StaticImageData } from "next/image";
 import Instagram from "@/assets/icons/instagram.svg";
 import Whatsapp from "@/assets/icons/whatsapp.svg";
 import Phone from "@/assets/icons/phone.svg";
 import type { SocialLink } from "@/lib/directus/types";
 import styles from "./SocialLinks.module.css";
 
-const ICONS: Record<string, any> = { instagram: Instagram, whatsapp: Whatsapp, phone: Phone };
+const ICONS: Record<string, StaticImageData> = { instagram: Instagram, whatsapp: Whatsapp, phone: Phone };
 
 /** Social icons driven by site_settings.social_links (+ phone). */
 export default function SocialLinks({
@@ -18,7 +18,7 @@ export default function SocialLinks({
 	phone?: string;
 }) {
 	const invert = color !== "white" ? 100 : 0;
-	const items: { url: string; icon: any; alt: string }[] = [];
+	const items: { url: string; icon: StaticImageData; alt: string }[] = [];
 
 	for (const l of links ?? []) {
 		const icon = ICONS[l.platform.toLowerCase()];

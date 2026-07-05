@@ -1,16 +1,10 @@
 import Link from "next/link";
 import { assetUrl } from "@/lib/directus/assets";
-import { localeHref } from "@/lib/i18n/href";
+import { localeHref, navItemHref } from "@/lib/i18n/href";
 import type { Locale } from "@/lib/i18n/config";
-import type { NavItem, FooterSection, SiteSettings } from "@/lib/directus/types";
+import type { FooterSection, SiteSettings } from "@/lib/directus/types";
 import SocialLinks from "@/components/SocialLinks";
 import styles from "./Footer.module.css";
-
-function hrefFor(locale: Locale, item: NavItem): string {
-	if (item.link_type === "external") return item.external_url ?? "#";
-	if (item.link_type === "anchor") return `${localeHref(locale, "/")}${item.anchor ?? ""}`;
-	return localeHref(locale, item.permalink);
-}
 
 export default function Footer({
 	locale,
@@ -47,7 +41,7 @@ export default function Footer({
 							<ul>
 								{section.links.map((link, j) => (
 									<li key={j}>
-										<Link href={hrefFor(locale, link)}>{link.title}</Link>
+										<Link href={navItemHref(locale, link)}>{link.title}</Link>
 									</li>
 								))}
 							</ul>

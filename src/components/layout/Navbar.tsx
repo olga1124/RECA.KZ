@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { House, Menu, X } from "lucide-react";
 import { assetUrl } from "@/lib/directus/assets";
-import { localeHref } from "@/lib/i18n/href";
+import { localeHref, navItemHref } from "@/lib/i18n/href";
 import type { Locale } from "@/lib/i18n/config";
 import type { NavItem, SocialLink } from "@/lib/directus/types";
 import LanguageSwitcher from "./LanguageSwitcher";
@@ -15,13 +15,6 @@ export interface NavbarLabels {
 	menu: string;
 	close: string;
 	contact: string;
-}
-
-/** Resolve a nav item to an href for the current locale. */
-function hrefFor(locale: Locale, item: NavItem): string {
-	if (item.link_type === "external") return item.external_url ?? "#";
-	if (item.link_type === "anchor") return `${localeHref(locale, "/")}${item.anchor ?? ""}`;
-	return localeHref(locale, item.permalink);
 }
 
 export default function Navbar({
@@ -103,7 +96,7 @@ export default function Navbar({
 						<ul className={styles.drawerNav}>
 							{nav.map((item, i) => (
 								<li key={item.title}>
-									<Link href={hrefFor(locale, item)} onClick={() => setOpen(false)}>
+									<Link href={navItemHref(locale, item)} onClick={() => setOpen(false)}>
 										<span className={styles.drawerIndex}>{String(i + 1).padStart(2, "0")}</span>
 										{item.title}
 									</Link>
