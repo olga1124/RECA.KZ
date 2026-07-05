@@ -23,14 +23,15 @@
 }
 
 .photo {
+	position: relative;
+	display: block;
 	float: left;
 	width: min(240px, 42%);
 	aspect-ratio: 4 / 5;
 	margin: 6px 32px 16px 0;
 	border-radius: var(--r-lg);
 	border: 1px solid var(--line);
-	object-fit: cover;
-	object-position: top;
+	overflow: hidden;
 }
 
 .eyebrow {

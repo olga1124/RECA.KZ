@@ -1,4 +1,5 @@
 import { assetUrl } from "@/lib/directus/assets";
+import DirectusImage from "@/components/DirectusImage";
 import type { FounderProfileBlock } from "@/lib/directus/types";
 import styles from "./FounderProfile.module.css";
 
@@ -8,8 +9,15 @@ export default function FounderProfile({ data }: { data: FounderProfileBlock }) 
 			<div className={styles.container}>
 				<div className={styles.content}>
 					{data.photoId && (
-						/* eslint-disable-next-line @next/next/no-img-element */
-						<img src={assetUrl(data.photoId, { width: 600 })} alt={data.name ?? ""} className={styles.photo} />
+						<span className={styles.photo}>
+							<DirectusImage
+								src={assetUrl(data.photoId)}
+								alt={data.name ?? ""}
+								fill
+								sizes="240px"
+								style={{ objectFit: "cover", objectPosition: "top" }}
+							/>
+						</span>
 					)}
 					{data.eyebrow_title && <h3 className={styles.eyebrow}>{data.eyebrow_title}</h3>}
 					{data.name && <h3 className={styles.name}>{data.name}</h3>}
