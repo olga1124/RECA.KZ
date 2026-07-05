@@ -56,7 +56,21 @@ async function loadForm(id: string) {
 
 export async function POST(req: NextRequest) {
 	try {
+		// Same-origin guard: block cross-site POSTs. Browsers send Origin on
+		// fetch POST; when present it must match the request host.
+		const origin = req.headers.get("origin");
+		if (origin && new URL(origin).host !== req.headers.get("host")) {
+			return NextResponse.json({ error: "forbidden" }, { status: 403 });
+		}
+
 		const fd = await req.formData();
+
+		// Honeypot: a hidden field no human fills. If set, a bot did — pretend
+		// success (200) so it can't distinguish, but create nothing.
+		if (String(fd.get("_hp") ?? "").trim() !== "") {
+			return NextResponse.json({ ok: true });
+		}
+
 		const formId = String(fd.get("formId") ?? "");
 		const payload = JSON.parse(String(fd.get("payload") ?? "{}")) as Record<string, unknown>;
 		if (!formId) return NextResponse.json({ error: "missing formId" }, { status: 400 });

@@ -44,6 +44,7 @@ export default function DynamicForm({ form, ui }: { form: FormDef; ui: FormUiStr
 	const [values, setValues] = useState<Values>({});
 	const [status, setStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
 	const [phoneErrors, setPhoneErrors] = useState<string[]>([]);
+	const [honeypot, setHoneypot] = useState("");
 
 	const set = (name: string, value: Values[string]) => setValues((v) => ({ ...v, [name]: value }));
 
@@ -80,6 +81,7 @@ export default function DynamicForm({ form, ui }: { form: FormDef; ui: FormUiStr
 		}
 		fd.append("formId", form.id);
 		fd.append("payload", JSON.stringify(payload));
+		fd.append("_hp", honeypot);
 		try {
 			const res = await fetch("/api/forms/submit", { method: "POST", body: fd });
 			if (!res.ok) throw new Error(await res.text());
@@ -113,6 +115,17 @@ export default function DynamicForm({ form, ui }: { form: FormDef; ui: FormUiStr
 
 	return (
 		<form className={styles.form} onSubmit={submit}>
+			{/* Honeypot: off-screen, hidden from AT and tab order; bots fill it. */}
+			<input
+				type="text"
+				name="_hp"
+				tabIndex={-1}
+				autoComplete="off"
+				aria-hidden="true"
+				value={honeypot}
+				onChange={(e) => setHoneypot(e.target.value)}
+				style={{ position: "absolute", left: "-9999px", width: 1, height: 1, opacity: 0 }}
+			/>
 			{(form.title || multiStep) && (
 				<div className={styles.header}>
 					{form.title && <h2 className={styles.title}>{form.title}</h2>}
