@@ -30,6 +30,33 @@ const ALLOWED_UPLOAD_TYPES = new Set([
 	"image/png",
 ]);
 
+// ── Anti-abuse ────────────────────────────────────────────────────────────
+// Layered with the honeypot + same-origin checks below. In-memory fixed-window
+// rate limit — fine for the single-container deployment; move to a shared store
+// (Redis) if the app is ever scaled horizontally.
+const RATE_LIMIT = 5; // max submissions…
+const RATE_WINDOW_MS = 10 * 60 * 1000; // …per IP per 10 minutes
+const MIN_SUBMIT_MS = 2500; // faster than this after render ⇒ almost certainly a bot
+const hits = new Map<string, number[]>();
+
+function clientIp(req: NextRequest): string {
+	const xff = req.headers.get("x-forwarded-for");
+	if (xff) return xff.split(",")[0].trim();
+	return req.headers.get("x-real-ip") ?? "unknown";
+}
+
+function rateLimited(ip: string): boolean {
+	const now = Date.now();
+	const recent = (hits.get(ip) ?? []).filter((t) => now - t < RATE_WINDOW_MS);
+	recent.push(now);
+	hits.set(ip, recent);
+	// Opportunistic cleanup so stale IPs don't accumulate unbounded.
+	if (hits.size > 5000) {
+		for (const [k, v] of hits) if (v.every((t) => now - t >= RATE_WINDOW_MS)) hits.delete(k);
+	}
+	return recent.length > RATE_LIMIT;
+}
+
 // Uploaded CVs are filed into this directus_files folder (created by schema.mjs)
 // instead of the library root. Resolved by name once per server instance.
 const UPLOAD_FOLDER = "CV";
@@ -77,11 +104,23 @@ export async function POST(req: NextRequest) {
 			return NextResponse.json({ error: "forbidden" }, { status: 403 });
 		}
 
+		// Per-IP rate limit (hard gate — the IP can't be spoofed past Caddy).
+		if (rateLimited(clientIp(req))) {
+			return NextResponse.json({ error: "too many requests" }, { status: 429 });
+		}
+
 		const fd = await req.formData();
 
 		// Honeypot: a hidden field no human fills. If set, a bot did — pretend
 		// success (200) so it can't distinguish, but create nothing.
 		if (String(fd.get("_hp") ?? "").trim() !== "") {
+			return NextResponse.json({ ok: true });
+		}
+
+		// Time-trap: a form submitted implausibly fast after render is a bot.
+		// Soft signal (client-reported), so also fake success rather than error.
+		const elapsed = Number(fd.get("_ts") ?? 0);
+		if (elapsed > 0 && elapsed < MIN_SUBMIT_MS) {
 			return NextResponse.json({ ok: true });
 		}
 

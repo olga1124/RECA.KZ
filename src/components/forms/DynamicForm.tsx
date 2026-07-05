@@ -1,5 +1,5 @@
 "use client";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { Paperclip, Upload } from "lucide-react";
 import PhoneInput, { isValidPhoneNumber, type Value as PhoneValue } from "react-phone-number-input";
 import flags from "react-phone-number-input/flags";
@@ -45,6 +45,8 @@ export default function DynamicForm({ form, ui }: { form: FormDef; ui: FormUiStr
 	const [status, setStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
 	const [phoneErrors, setPhoneErrors] = useState<string[]>([]);
 	const [honeypot, setHoneypot] = useState("");
+	// When the form was first rendered — used server-side as a bot time-trap.
+	const mountedAt = useRef(Date.now());
 
 	const set = (name: string, value: Values[string]) => setValues((v) => ({ ...v, [name]: value }));
 
@@ -82,6 +84,7 @@ export default function DynamicForm({ form, ui }: { form: FormDef; ui: FormUiStr
 		fd.append("formId", form.id);
 		fd.append("payload", JSON.stringify(payload));
 		fd.append("_hp", honeypot);
+		fd.append("_ts", String(Date.now() - mountedAt.current));
 		try {
 			const res = await fetch("/api/forms/submit", { method: "POST", body: fd });
 			if (!res.ok) throw new Error(await res.text());
