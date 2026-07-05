@@ -16,6 +16,20 @@ const COLUMNS: Record<"leads" | "applicants", Set<string>> = {
 	applicants: new Set(["name", "last_name", "email", "phone", "position", "file"]),
 };
 
+// Upload constraints for applicant files (CVs). Size can't be spoofed; the
+// extension/MIME allowlist keeps out executables and oversized junk. Files land
+// in a private folder and are never served through the public asset proxy.
+const MAX_UPLOAD_BYTES = 10 * 1024 * 1024; // 10 MB
+const ALLOWED_UPLOAD_EXT = new Set(["pdf", "doc", "docx", "rtf", "jpg", "jpeg", "png"]);
+const ALLOWED_UPLOAD_TYPES = new Set([
+	"application/pdf",
+	"application/msword",
+	"application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+	"application/rtf",
+	"image/jpeg",
+	"image/png",
+]);
+
 // Uploaded CVs are filed into this directus_files folder (created by schema.mjs)
 // instead of the library root. Resolved by name once per server instance.
 const UPLOAD_FOLDER = "CV";
@@ -103,12 +117,23 @@ export async function POST(req: NextRequest) {
 			if (type !== "file") continue;
 			const file = fd.get(`file_${name}`);
 			if (file instanceof File && file.size > 0) {
+				if (file.size > MAX_UPLOAD_BYTES) {
+					return NextResponse.json({ error: "file too large" }, { status: 413 });
+				}
+				const ext = file.name.split(".").pop()?.toLowerCase() ?? "";
+				const typeOk = file.type ? ALLOWED_UPLOAD_TYPES.has(file.type) : true;
+				if (!ALLOWED_UPLOAD_EXT.has(ext) || !typeOk) {
+					return NextResponse.json({ error: "unsupported file type" }, { status: 415 });
+				}
 				const up = new FormData();
 				const folder = await getUploadFolder();
 				if (folder) up.append("folder", folder); // non-file fields must precede the file part
 				up.append("file", file, file.name);
 				const res = await directus("/files", { method: "POST", body: up });
-				if (!res.ok) return NextResponse.json({ error: "upload failed" }, { status: 502 });
+				if (!res.ok) {
+					console.error("Directus file upload failed:", res.status, await res.text());
+					return NextResponse.json({ error: "upload failed" }, { status: 502 });
+				}
 				const { data } = await res.json();
 				record[name] = data.id;
 			}
@@ -124,10 +149,14 @@ export async function POST(req: NextRequest) {
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify(record),
 		});
-		if (!res.ok) return NextResponse.json({ error: "create failed", detail: await res.text() }, { status: 502 });
+		if (!res.ok) {
+			console.error("Directus item create failed:", res.status, await res.text());
+			return NextResponse.json({ error: "create failed" }, { status: 502 });
+		}
 
 		return NextResponse.json({ ok: true });
 	} catch (err) {
-		return NextResponse.json({ error: String(err) }, { status: 500 });
+		console.error("Form submit error:", err);
+		return NextResponse.json({ error: "server error" }, { status: 500 });
 	}
 }
