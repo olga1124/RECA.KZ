@@ -6,9 +6,13 @@ import type { PageData } from "@/lib/directus/types";
 import type { Locale } from "@/lib/i18n/config";
 
 import { getPage } from "@/lib/directus/queries";
-import { isLocale } from "@/lib/i18n/config";
+import { isLocale, defaultLocale } from "@/lib/i18n/config";
 
 export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://reca.kz").replace(/\/$/, "");
+
+// schema.org / OpenGraph want a full locale tag (language_TERRITORY), not the
+// bare routing code used in URLs.
+const OG_LOCALE: Record<Locale, string> = { ru: "ru_RU", kz: "kk_KZ", en: "en_US" };
 
 /** Fetch a page and build its metadata; shared by the home and [slug] routes. */
 export async function getPageMetadata(locale: string, permalink: string): Promise<Metadata> {
@@ -25,20 +29,36 @@ export async function buildMetadata(page: PageData, locale: Locale, permalink: s
 	for (const [code, path] of Object.entries(alternates)) {
 		languages[code] = `${SITE_URL}/${code}${path === "/" ? "" : path}`;
 	}
+	// x-default points at the default-locale variant (Google's recommendation
+	// for the fallback served to unmatched languages).
+	if (languages[defaultLocale]) languages["x-default"] = languages[defaultLocale];
+
 	const canonical = `${SITE_URL}/${locale}${permalink === "/" ? "" : permalink}`;
+	const title = page.seo?.title ?? page.title;
+	const description = page.seo?.meta_description;
+	// Social share title/description can be authored separately; fall back to meta.
+	const ogTitle = page.seo?.og_title || title;
+	const ogDescription = page.seo?.og_description || description;
 	const ogImage = page.seo?.ogImageId ? `${SITE_URL}${assetUrl(page.seo.ogImageId, { width: 1200 })}` : undefined;
 
 	return {
-		title: page.seo?.title ?? page.title,
-		description: page.seo?.meta_description,
+		title,
+		description,
 		alternates: { canonical, languages },
 		robots: page.seo?.no_index ? { index: false, follow: false } : undefined,
 		openGraph: {
-			title: page.seo?.title ?? page.title,
-			description: page.seo?.meta_description,
+			type: "website",
+			title: ogTitle,
+			description: ogDescription,
 			url: canonical,
-			locale,
+			locale: OG_LOCALE[locale],
 			images: ogImage ? [{ url: ogImage, width: 1200 }] : undefined,
+		},
+		twitter: {
+			card: ogImage ? "summary_large_image" : "summary",
+			title: ogTitle,
+			description: ogDescription,
+			images: ogImage ? [ogImage] : undefined,
 		},
 	};
 }

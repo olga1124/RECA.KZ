@@ -32,7 +32,7 @@ query Page($permalink: String!, $lang: String!) {
     seo {
       no_index
       og_image { id }
-      translations${TR_FILTER} { languages_code { code } title meta_description }
+      translations${TR_FILTER} { languages_code { code } title meta_description og_title og_description }
     }
     blocks(sort: ["sort"]) {
       collection
@@ -73,7 +73,7 @@ interface RawPage {
 	seo?: {
 		no_index?: boolean;
 		og_image?: { id: string } | null;
-		translations?: { title?: string; meta_description?: string }[];
+		translations?: { title?: string; meta_description?: string; og_title?: string; og_description?: string }[];
 	} | null;
 	blocks: { collection: string; item: any }[];
 }
@@ -171,7 +171,14 @@ export const getPage = cache(async (permalink: string, locale: Locale): Promise<
 		permalink: raw.seo_url ?? permalink,
 		title: raw.title ?? "",
 		seo: raw.seo
-			? { title: seoTr?.title, meta_description: seoTr?.meta_description, ogImageId: raw.seo.og_image?.id ?? null, no_index: raw.seo.no_index }
+			? {
+					title: seoTr?.title,
+					meta_description: seoTr?.meta_description,
+					og_title: seoTr?.og_title,
+					og_description: seoTr?.og_description,
+					ogImageId: raw.seo.og_image?.id ?? null,
+					no_index: raw.seo.no_index,
+				}
 			: undefined,
 		blocks: mapBlocks(raw.blocks, locale),
 	};

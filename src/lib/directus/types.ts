@@ -117,6 +117,8 @@ export type BlockData =
 export interface PageSeo {
 	title?: string;
 	meta_description?: string;
+	og_title?: string;
+	og_description?: string;
 	ogImageId?: string | null;
 	no_index?: boolean;
 }

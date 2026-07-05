@@ -58,9 +58,21 @@ async function seo() {
 	await ensureCollection("seo", { meta: { icon: "search", note: "Per-page SEO" }, schema: {} });
 	await fileField("seo", "og_image");
 	await ensureField("seo", "no_index", bool({ meta: { note: "Exclude from search engines" } }));
+	// Sitemap hints (language-agnostic, so not translated).
+	await ensureField("seo", "priority", {
+		type: "float",
+		meta: { interface: "slider", note: "Sitemap priority (0.0–1.0), relative importance of this page", width: "half", options: { minValue: 0, maxValue: 1, stepInterval: 0.1 } },
+		schema: { default_value: 0.5 },
+	});
+	await ensureField("seo", "change_frequency", dropdown(
+		["always", "hourly", "daily", "weekly", "monthly", "yearly", "never"],
+		{ meta: { note: "Sitemap change-frequency hint", width: "half" }, schema: { default_value: "weekly" } },
+	));
 	await ensureTranslations("seo", [
-		{ field: "title", ...str({ meta: { note: "<title> / og:title" } }) },
-		{ field: "meta_description", ...text({ meta: { note: "meta description / og:description" } }) },
+		{ field: "title", ...str({ meta: { note: "<title> tag (og:title falls back to this)" } }) },
+		{ field: "meta_description", ...text({ meta: { note: "meta description (og:description falls back to this)" } }) },
+		{ field: "og_title", ...str({ meta: { note: "Social share title (Open Graph / Twitter). Optional — falls back to title." } }) },
+		{ field: "og_description", ...text({ meta: { note: "Social share description (Open Graph / Twitter). Optional — falls back to meta description." } }) },
 	]);
 }
 
