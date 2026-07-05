@@ -11,11 +11,11 @@
    ═══════════════════════════════════════════════════════════════════════════ */
 
 :root {
-	/* Brand — vivid azure + warm signal orange */
-	--brand: #0b57a4;
-	--brand-600: #1268c3;
-	--brand-700: #093e75;
-	--brand-050: #eaf2fb;
+	/* Brand — unified indigo-blue + warm signal orange */
+	--brand: #293f80;
+	--brand-600: #293f80;
+	--brand-700: #293f80;
+	--brand-050: #ebedf5; /* pale tint of --brand (field fills, focus ring, chips) */
 	--accent: #e06a00;
 	--accent-600: #c05a00;
 	--star: #f2a218;

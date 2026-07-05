@@ -1,4 +1,14 @@
+/* CTA — a defined, rounded accent card. Cinematic depth via glows + dot-grid.
+   Colour lives in these locals only; global tokens stay untouched.
+   Swap the --cta-* values to re-theme the whole block. */
 .section {
+	--cta-base: #141e29; /* wet asphalt — dark blue-slate */
+	--cta-deep: #1c3c63; /* calm, saturated navy-blue */
+	--cta-glow: #3b7ddd; /* composed azure glow */
+	--cta-steel: #24557f; /* muted steel-blue lower glow */
+	--cta-btn: #eef4fb; /* cool crisp light button */
+	--cta-btn-ink: #12283f; /* deep navy ink */
+
 	padding-block: var(--section-y);
 }
 
@@ -8,62 +18,50 @@
 	padding-inline: var(--container-px);
 }
 
+/* The card — this is the shape. */
 .band {
 	position: relative;
+	isolation: isolate;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	text-align: center;
-	gap: clamp(18px, 2.5vw, 24px);
-	background:
-		radial-gradient(560px 420px at 14% -20%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 70%),
-		radial-gradient(680px 520px at 90% 130%, color-mix(in srgb, var(--brand-600) 60%, transparent), transparent 72%),
-		linear-gradient(120deg, var(--brand) 0%, var(--brand-700) 100%);
-	color: var(--on-dark);
+	gap: clamp(24px, 3.5vw, 40px);
+	padding: 2rem;
+	/* padding: clamp(48px, 8vw, 104px) clamp(24px, 6vw, 80px); */
 	border-radius: var(--r-lg);
-	padding: clamp(32px, 5vw, 56px) clamp(24px, 5vw, 72px);
 	overflow: hidden;
+	background:#293f80;	
 }
 
-/* Oversized hairline rings — quiet ornament for the empty corners. */
-.band::before,
-.band::after {
+/* Faint dot-grid — quiet texture that only reads up close. */
+.band::before {
 	content: "";
 	position: absolute;
-	aspect-ratio: 1;
-	border: 3px solid color-mix(in srgb, var(--on-dark) 16%, transparent);
-	border-radius: var(--r-pill);
+	inset: 0;
+	z-index: -1;
+	background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+	background-size: 34px 34px;
+	mask-image: radial-gradient(70% 60% at 50% 42%, #000 0%, transparent 82%);
+	-webkit-mask-image: radial-gradient(70% 60% at 50% 42%, #000 0%, transparent 82%);
 	pointer-events: none;
 }
 
-.band::before {
-	width: min(720px, 70vw);
-	right: -8%;
-	top: 0;
-	transform: translateY(-70%);
-}
-
-.band::after {
-	width: min(640px, 60vw);
-	left: -6%;
-	bottom: 0;
-	transform: translateY(72%);
-}
-
 .text {
-	position: relative;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	gap: 16px;
+	gap: 20px;
 }
 
 .eyebrow {
 	display: inline-flex;
+	align-items: center;
 	padding: 8px 16px;
-	border: 1px solid color-mix(in srgb, var(--on-dark) 28%, transparent);
+	border: 1px solid color-mix(in srgb, var(--cta-glow) 55%, transparent);
 	border-radius: var(--r-pill);
-	background: color-mix(in srgb, var(--on-dark) 8%, transparent);
+	background: color-mix(in srgb, var(--cta-glow) 14%, transparent);
+	color: color-mix(in srgb, var(--cta-glow) 35%, #ffffff);
 	font-size: var(--fs-xs);
 	font-weight: var(--fw-bold);
 	letter-spacing: var(--ls-caps);
@@ -71,19 +69,21 @@
 }
 
 .heading {
-	max-width: 22ch;
-	font-size: var(--fs-2xl);
+	width: 100%;
+	/* font-size: var(--fs-3xl); */
 	font-weight: var(--fw-extra);
 	line-height: var(--lh-tight);
-	letter-spacing: var(--ls-tight);
-	color: var(--on-dark);
+	letter-spacing: var(--ls-tighter);
+	color: #ffffff;
+	text-wrap: balance;
 }
 
 .subheading {
-	max-width: 52ch;
+	width: 100%;
 	font-size: var(--fs-md);
 	line-height: var(--lh-normal);
-	color: var(--on-dark-2);
+	color: color-mix(in srgb, #ffffff 78%, var(--cta-deep));
+	text-wrap: pretty;
 }
 
 .button {
@@ -91,19 +91,23 @@
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
+	margin-top: 4px;
 	font-size: var(--fs-md);
-	font-weight: var(--fw-semibold);
-	color: var(--on-dark);
-	background: var(--accent);
-	padding: 18px 48px;
-	border-radius: var(--r-sm);
+	font-weight: var(--fw-bold);
+	color: var(--cta-btn-ink);
+	background: var(--cta-btn);
+	padding: 19px 52px;
+	border-radius: var(--r-pill);
 	cursor: pointer;
-	transition: background var(--dur) var(--ease), transform var(--dur) var(--ease);
+	box-shadow: 0 14px 44px -14px rgba(0, 0, 0, 0.55);
+	transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease),
+		background var(--dur) var(--ease);
 }
 
 .button:hover {
-	background: var(--accent-600);
+	background: #ffffff;
 	transform: translateY(-2px);
+	box-shadow: 0 20px 56px -14px rgba(0, 0, 0, 0.6);
 }
 
 @media (max-width: 520px) {
