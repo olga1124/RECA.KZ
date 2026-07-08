@@ -3,13 +3,13 @@ import type { FeatureListBlock } from "@/lib/directus/types";
 import styles from "./FeatureList.module.css";
 
 export default function FeatureList({ data }: { data: FeatureListBlock }) {
-	const [first, ...rest] = (data.heading ?? "").split(" ");
+
 	return (
 		<section className={styles.section}>
 			<div className={styles.container}>
 				{data.heading && (
 					<h2>
-						{first} <span>{rest.join(" ")}</span>
+						{data.heading}
 					</h2>
 				)}
 				<div className={styles.content}>
