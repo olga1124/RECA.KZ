@@ -12,11 +12,11 @@
 
 :root {
 	/* Brand — unified indigo-blue + warm signal orange */
-	--brand: #293f80;
-	--brand-600: #293f80;
+	--brand: #04426f;
+	--brand-600: #04426f;
 	--brand-700: #293f80;
 	--brand-050: #ebedf5; /* pale tint of --brand (field fills, focus ring, chips) */
-	--accent: #e06a00;
+	--accent: #cf7b18;
 	--accent-600: #c05a00;
 	--star: #f2a218;
 	--danger: #c53929;
